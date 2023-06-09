@@ -1,0 +1,121 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/input_design"
+    android:layout_margin="8dp"
+    app:cardElevation="4dp">
+
+
+    <RelativeLayout
+        android:id="@+id/mycart_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/productImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/textViewProductName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/project_id"
+            android:layout_toEndOf="@id/productImageView"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/textViewProductDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="descriptin"
+            android:layout_below="@id/textViewProductName"
+            android:layout_toEndOf="@id/productImageView"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textViewProductPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="price"
+            android:layout_below="@id/textViewProductDescription"
+            android:layout_toEndOf="@id/productImageView"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/textViewLampWatt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watt"
+            android:layout_marginLeft="50dp"
+            android:layout_below="@id/textViewProductDescription"
+            android:layout_toEndOf="@id/textViewProductPrice"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/textViewLampShade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shade"
+            android:layout_marginLeft="50dp"
+            android:layout_below="@id/textViewProductDescription"
+            android:layout_toEndOf="@id/textViewLampWatt"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp" />
+
+
+
+        <TextView
+            android:id="@+id/textViewProductQuantity"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/productImageView"
+            android:layout_below="@id/textViewProductPrice"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:text="Quantity"/>
+
+        <Button
+            android:id="@+id/increaseQuantityButton"
+            android:layout_width="59dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewProductQuantity"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@id/productImageView"
+            android:text="+" />
+
+        <Button
+            android:id="@+id/decreaseQuantityButton"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewProductQuantity"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toEndOf="@id/increaseQuantityButton"
+            android:text="-" />
+
+        <Button
+            android:id="@+id/remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewProductPrice"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="46dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="33dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toEndOf="@id/decreaseQuantityButton"
+            android:text="Remove" />
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

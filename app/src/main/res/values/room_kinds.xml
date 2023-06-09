@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="room_kinds">
+        <item>living room Ambient</item>
+        <item>living room Task</item>
+        <item>kitchen Ambient</item>
+        <item>kitchen Task</item>
+        <item>dining room</item>
+        <item>bedroom Ambient</item>
+        <item>bedroom Task</item>
+        <item>bathroom Ambient</item>
+        <item>bathroom Task</item>
+        <item>laundry room</item>
+        <item>home office Ambient</item>
+        <item>home office Task</item>
+    </string-array>
+
+
+
+</resources>

@@ -1,0 +1,34 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.homeFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/itemRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
+        tools:listitem="@layout/item_layout" />
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btnLightCalc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Light Calc"
+            android:layout_marginTop="80dp"
+            android:onClick="openLightCalcFragment" />
+
+
+
+
+
+
+    </FrameLayout>
+
+</FrameLayout>
