@@ -111,7 +111,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                             // Create a new Item object with the retrieved data
-                            Item item = new Item(name, description, price, adminName, quantity, bmp);
+                            Item item = new Item(name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
 
                             // Add the item to the list
                             itemList.add(item);
@@ -142,31 +142,23 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                     String price = document.getString("price");
                     String adminName = document.getString("adminName");
                     String quantity = document.getString("quantity");
-                    String imageURL = document.getString("imageURL");
+                    String imageURL = document.getString("imageURL");  // image is a string URL now
 
-                    // Retrieve the image from storage
-                    StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
-                    imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                        // Use the image bytes as needed
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    // Create a new Item object with the retrieved data
+                    Item item = new Item(name, description, price, adminName, quantity, imageURL); // use imageURL here
 
-                        // Create a new Item object with the retrieved data
-                        Item item = new Item(name, description, price, adminName, quantity, bmp);
+                    // Add the item to the list
+                    itemList.add(item);
 
-                        // Add the item to the list
-                        itemList.add(item);
-
-                        // Notify the adapter that the data set has changed
-                        itemAdapter.notifyDataSetChanged();
-                    }).addOnFailureListener(exception -> {
-                        // Handle any errors that occurred while retrieving the image
-                    });
+                    // Notify the adapter that the data set has changed
+                    itemAdapter.notifyDataSetChanged();
                 }
             } else {
                 // Handle errors that occurred while fetching the lamps
             }
         });
     }
+
 
 
     @Override

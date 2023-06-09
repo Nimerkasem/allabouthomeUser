@@ -8,18 +8,21 @@ public class Item {
     private String price;
     private String adminName;
     private String quantity;
-    private Bitmap image;
+    private String image;
     public Item(String name){
         this.name=name;
     }
 
-    public Item(String name, String description, String price, String adminName, String quantity, Bitmap image) {
+    public Item(String name, String description, String price, String adminName, String quantity, String image) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.adminName = adminName;
         this.quantity = quantity;
         this.image = image;
+    }
+
+    public Item() {
     }
 
     public String getName() {
@@ -44,8 +47,11 @@ public class Item {
         return quantity;
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 }
 
