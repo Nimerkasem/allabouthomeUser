@@ -24,7 +24,9 @@
     import com.google.firebase.firestore.DocumentSnapshot;
     import com.google.firebase.firestore.FirebaseFirestore;
 
+    import java.util.HashMap;
     import java.util.List;
+    import java.util.Map;
 
     public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
         private List<Item> itemList;
@@ -114,6 +116,7 @@
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                    updateAdminCart(userId, product.getAdminName(), product.getPrice());
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -131,6 +134,7 @@
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                    updateAdminCart(userId, product.getAdminName(), product.getPrice());
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -146,4 +150,85 @@
                         }
                     });
         }
+
+        private void updateAdminCart(String userId, String adminId, String totalPrice) {
+            db.collection("Users").document(userId)
+                    .collection("adminCart")
+                    .document(adminId)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    // Update existing admin cart
+                                    Map<String, Object> adminCartData = document.getData();
+                                    if (adminCartData != null) {
+                                        HashMap<String, Integer> adminCart = new HashMap<>();
+                                        for (Map.Entry<String, Object> entry : adminCartData.entrySet()) {
+                                            String key = entry.getKey();
+                                            Object value = entry.getValue();
+                                            if (value instanceof Long) {
+                                                adminCart.put(key, ((Long) value).intValue());
+                                            } else if (value instanceof Integer) {
+                                                adminCart.put(key, (Integer) value);
+                                            }
+                                        }
+
+                                        if (adminCart.containsKey(adminId)) {
+                                            // Update total price
+                                            int existingPrice = adminCart.get(adminId);
+                                            int totalPriceInt = Integer.parseInt(totalPrice);
+                                            int newPrice = existingPrice + totalPriceInt;
+                                            adminCart.put(adminId, newPrice);
+                                        }
+
+                                        db.collection("Users").document(userId)
+                                                .collection("adminCart")
+                                                .document(adminId)
+                                                .set(adminCart)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "Admin cart successfully updated!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error updating admin cart", e);
+                                                    }
+                                                });
+                                    }
+                                } else {
+                                    // Create new admin cart
+                                    HashMap<String, Integer> adminCart = new HashMap<>();
+                                    adminCart.put(adminId, Integer.parseInt(totalPrice));
+
+                                    db.collection("Users").document(userId)
+                                            .collection("adminCart")
+                                            .document(adminId)
+                                            .set(adminCart)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "Admin cart successfully created!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error creating admin cart", e);
+                                                }
+                                            });
+                                }
+                            } else {
+                                Log.w(TAG, "Error getting admin cart.", task.getException());
+                            }
+                        }
+                    });
+        }
+
+
     }

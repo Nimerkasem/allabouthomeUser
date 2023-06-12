@@ -136,6 +136,20 @@ public class room {
         }
         return -1; // Return -1 for invalid or unrecognized room types
     }
+    public static int getAngle(room room) {
+        int Angle;
+        String kind = room.getKind();
+        if (kind.contains("living room")) {
+            Angle = 60;
+        } else if (kind.contains("kitchen")) {
+            Angle = 25;
+        } else if (kind.contains("home office") || kind.contains("dining room")) {
+            Angle = 24;
+        } else {
+            Angle = 45;
+        }
+        return Angle;
+    }
 
 
 

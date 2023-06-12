@@ -13,6 +13,8 @@ import com.finalproject.allabouthomeuser.R;
 
 import java.util.List;
 
+
+
 public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder> {
     Context context;
     List<myCart> list;

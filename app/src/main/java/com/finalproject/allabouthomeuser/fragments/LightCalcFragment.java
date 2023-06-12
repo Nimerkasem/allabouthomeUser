@@ -25,7 +25,7 @@ public class LightCalcFragment extends Fragment {
     private TextView tvLedWatt;
     private TextView tvShade;
 
-
+    private TextView tvAngle;
     @Nullable
 
     @Override
@@ -37,6 +37,7 @@ public class LightCalcFragment extends Fragment {
         btnCalculate = view.findViewById(R.id.btnCalculate);
         tvLedWatt = view.findViewById(R.id.tvLedWatt);
         tvShade = view.findViewById(R.id.tvShade);
+        tvAngle =view.findViewById(R.id.tvAngle);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.room_kinds, android.R.layout.simple_spinner_item);
@@ -58,27 +59,22 @@ public class LightCalcFragment extends Fragment {
         double length = Double.parseDouble(etLength.getText().toString());
         double width = Double.parseDouble(etWidth.getText().toString());
         String kind = spRoomKind.getSelectedItem().toString();
-
         room a = new room(length, width, kind);
-//        a.setLength(length);
-//        a.setWidth(width);
-//        a.setKind(kind);
-
-
-        double ledWatt = room.Ledwatt(a); // Call Ledwatt using the class name
+        double ledWatt = room.Ledwatt(a);
         int shade = room.getShade(a);
-
-        displayCalculationResult(ledWatt, shade);
+        int Angle =room.getAngle(a);
+        displayCalculationResult(ledWatt, shade,Angle);
     }
 
 
 
-    private void displayCalculationResult(double ledWatt, int shade) {
+    private void displayCalculationResult(double ledWatt, int shade,int Angle) {
         String ledWattMessage = "LED Watt: " + ledWatt;
         String shadeMessage = "Shade: " + shade;
-
+        String AngleMassage ="Angle: " + Angle;
         tvLedWatt.setText(ledWattMessage);
         tvShade.setText(shadeMessage);
+        tvAngle.setText(AngleMassage);
     }
 
 }
