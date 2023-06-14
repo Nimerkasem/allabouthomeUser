@@ -7,18 +7,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.finalproject.allabouthomeuser.R;
-import com.finalproject.allabouthomeuser.models.myCart;
 import com.finalproject.allabouthomeuser.models.MyCartAdapter;
+import com.finalproject.allabouthomeuser.models.myCart;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -26,7 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MycartFragment extends Fragment {
+public class MyCartFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<myCart> cartList;
     private MyCartAdapter cartAdapter;
@@ -35,20 +33,19 @@ public class MycartFragment extends Fragment {
     private TextView tvTotalPrice;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mycart, container, false);
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
-        recyclerView = view.findViewById(R.id.cartitems);
+        recyclerView = view.findViewById(R.id.cart_items_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         cartList = new ArrayList<>();
         cartAdapter = new MyCartAdapter(getContext(), cartList);
         recyclerView.setAdapter(cartAdapter);
 
-        tvTotalPrice = view.findViewById(R.id.textView);
+        tvTotalPrice = view.findViewById(R.id.total_price_text_view);
 
         fetchCartItems();
 
@@ -66,26 +63,26 @@ public class MycartFragment extends Fragment {
                         if (task.isSuccessful()) {
                             cartList.clear();
                             for (DocumentSnapshot doc : task.getResult().getDocuments()) {
-                                myCart mycart = doc.toObject(myCart.class);
-                                cartList.add(mycart);
+                                myCart cartItem = doc.toObject(myCart.class);
+                                cartList.add(cartItem);
                             }
                             cartAdapter.notifyDataSetChanged();
 
                             // Calculate total price and display it
-                            double totalPrice = calculateTotalPrice(cartList);
-                            displayTotalPrice(totalPrice);
+//                            double totalPrice = calculateTotalPrice(cartList);
+//                            displayTotalPrice(totalPrice);
                         }
                     }
                 });
     }
 
-    private double calculateTotalPrice(List<myCart> cartItems) {
-        double totalPrice = 0;
-        for (myCart item : cartItems) {
+//    private double calculateTotalPrice(List<myCart> cartItems) {
+//        double totalPrice = 0;
+//        for (myCart item : cartItems) {
 //            totalPrice += item.getPrice() * item.getQuantity();
-        }
-        return totalPrice;
-    }
+//        }
+//        return totalPrice;
+//    }
 
     private void displayTotalPrice(double totalPrice) {
         String totalPriceText = "Total Price: $" + totalPrice;

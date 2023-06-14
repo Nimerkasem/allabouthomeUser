@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.finalproject.allabouthomeuser.fragments.MycartFragment;
+import com.finalproject.allabouthomeuser.fragments.MyCartFragment;
 import com.finalproject.allabouthomeuser.fragments.ProfileFragment;
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.databinding.ActivityHomeBinding;
@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
                     replaceFragment(new homeFragment());
                     break;
                 case R.id.mycart:
-                    replaceFragment(new MycartFragment());
+                    replaceFragment(new MyCartFragment());
                     break;
                 case R.id.profile:
                     replaceFragment(new ProfileFragment());

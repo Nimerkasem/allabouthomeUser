@@ -165,33 +165,32 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if (v == btnLightCalc)
             openLightCalcFragment();
-        if (v == addToCart) {
-            addToCart();
-        }
-    }
-
-    private void addToCart() {
-        String saveCurrDate, saveCurrTime;
-        Calendar calDate = Calendar.getInstance();
-        SimpleDateFormat currDate = new SimpleDateFormat("MM/dd/yyyy");
-        saveCurrDate = currDate.format(calDate.getTime());
-        SimpleDateFormat currTime = new SimpleDateFormat("HH:mm:ss a");
-        saveCurrTime = currDate.format(calDate.getTime());
-
-        final HashMap<String, Object> cartMap = new HashMap<>();
-        cartMap.put("Time", saveCurrTime);
-        cartMap.put("Date", saveCurrDate);
-        cartMap.put("itemName", itemName.getText().toString());
-        cartMap.put("itemPrice", itemPrice.getText().toString());
-
-        db.collection("addToCart").document(auth.getCurrentUser().getUid())
-                .collection("user").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
 
     }
+
+//    private void addToCart() {
+//        String userId = auth.getCurrentUser().getUid();
+//        String saveCurrDate, saveCurrTime;
+//        Calendar calDate = Calendar.getInstance();
+//        SimpleDateFormat currDate = new SimpleDateFormat("MM/dd/yyyy");
+//        saveCurrDate = currDate.format(calDate.getTime());
+//        SimpleDateFormat currTime = new SimpleDateFormat("HH:mm:ss a");
+//        saveCurrTime = currDate.format(calDate.getTime());
+//
+//        final HashMap<String, Object> cartMap = new HashMap<>();
+//        cartMap.put("Time", saveCurrTime);
+//        cartMap.put("Date", saveCurrDate);
+//        cartMap.put("itemName", itemName.getText().toString());
+//        cartMap.put("itemPrice", itemPrice.getText().toString());
+//
+//
+//        db.collection("Users").document(userId).collection("cart").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentReference> task) {
+//                        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+//
+//    }
 }

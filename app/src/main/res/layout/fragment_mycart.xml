@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -18,7 +17,7 @@
         app:title="My Cart" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/total_price_text_view"
         android:layout_width="400dp"
         android:layout_height="57dp"
         android:layout_marginTop="12dp"
@@ -35,15 +34,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cartitems"
+        android:id="@+id/cart_items_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:listitem="@layout/mycart_item"/>
+        app:layout_constraintTop_toBottomOf="@+id/total_price_text_view"
+        tools:listitem="@layout/mycart_item" />
 
     <Button
         android:id="@+id/buy_now"
@@ -54,7 +52,6 @@
         android:background="@color/purple_700"
         android:gravity="bottom"
         android:padding="14dp"
-        android:paddingStart="180dp"
         android:text="Buy Now!"
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -62,9 +59,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.157"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/total_price_text_view"
         app:layout_constraintVertical_bias="0.911"
         tools:ignore="MissingConstraints" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

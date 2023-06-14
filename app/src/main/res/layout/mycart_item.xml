@@ -6,7 +6,6 @@
     android:layout_margin="8dp"
     app:cardElevation="4dp">
 
-
     <RelativeLayout
         android:id="@+id/mycart_item"
         android:layout_width="match_parent"
@@ -14,7 +13,7 @@
         android:padding="8dp">
 
         <ImageView
-            android:id="@+id/productImageView"
+            android:id="@+id/imageViewProductImage"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginEnd="16dp"
@@ -26,18 +25,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/project_id"
-            android:layout_toEndOf="@id/productImageView"
+            android:layout_toEndOf="@id/imageViewProductImage"
             android:textSize="16sp"
             android:textStyle="bold" />
-
 
         <TextView
             android:id="@+id/textViewProductDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="descriptin"
+            android:text="description"
             android:layout_below="@id/textViewProductName"
-            android:layout_toEndOf="@id/productImageView"
+            android:layout_toEndOf="@id/imageViewProductImage"
             android:layout_marginTop="8dp"
             android:textSize="14sp" />
 
@@ -47,9 +45,10 @@
             android:layout_height="wrap_content"
             android:text="price"
             android:layout_below="@id/textViewProductDescription"
-            android:layout_toEndOf="@id/productImageView"
+            android:layout_toEndOf="@id/imageViewProductImage"
             android:layout_marginTop="8dp"
             android:textSize="14sp" />
+
         <TextView
             android:id="@+id/textViewLampWatt"
             android:layout_width="wrap_content"
@@ -60,6 +59,7 @@
             android:layout_toEndOf="@id/textViewProductPrice"
             android:layout_marginTop="8dp"
             android:textSize="14sp" />
+
         <TextView
             android:id="@+id/textViewLampShade"
             android:layout_width="wrap_content"
@@ -71,17 +71,15 @@
             android:layout_marginTop="8dp"
             android:textSize="14sp" />
 
-
-
         <TextView
             android:id="@+id/textViewProductQuantity"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/productImageView"
+            android:layout_toEndOf="@id/imageViewProductImage"
             android:layout_below="@id/textViewProductPrice"
             android:layout_marginTop="8dp"
             android:textSize="14sp"
-            android:text="Quantity"/>
+            android:text="Quantity" />
 
         <Button
             android:id="@+id/increaseQuantityButton"
@@ -89,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textViewProductQuantity"
             android:layout_marginTop="8dp"
-            android:layout_toEndOf="@id/productImageView"
+            android:layout_toEndOf="@id/imageViewProductImage"
             android:text="+" />
 
         <Button
@@ -114,7 +112,6 @@
             android:layout_marginEnd="8dp"
             android:layout_toEndOf="@id/decreaseQuantityButton"
             android:text="Remove" />
-
 
     </RelativeLayout>
 
