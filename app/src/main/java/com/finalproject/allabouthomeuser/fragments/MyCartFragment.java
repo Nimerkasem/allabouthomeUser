@@ -68,21 +68,24 @@ public class MyCartFragment extends Fragment {
                             }
                             cartAdapter.notifyDataSetChanged();
 
-                            // Calculate total price and display it
-//                            double totalPrice = calculateTotalPrice(cartList);
-//                            displayTotalPrice(totalPrice);
+//                             Calculate total price and display it
+                            double totalPrice = calculateTotalPrice(cartList);
+                            displayTotalPrice(totalPrice);
                         }
                     }
                 });
     }
 
-//    private double calculateTotalPrice(List<myCart> cartItems) {
-//        double totalPrice = 0;
-//        for (myCart item : cartItems) {
-//            totalPrice += item.getPrice() * item.getQuantity();
-//        }
-//        return totalPrice;
-//    }
+    private double calculateTotalPrice(List<myCart> cartItems) {
+        double totalPrice = 0;
+        for (myCart item : cartItems) {
+            double itemPrice = Double.parseDouble(item.getPrice());
+            double itemQuantity = Double.parseDouble(item.getQuantity());
+            totalPrice += (itemPrice * itemQuantity);
+        }
+        return totalPrice;
+    }
+
 
     private void displayTotalPrice(double totalPrice) {
         String totalPriceText = "Total Price: $" + totalPrice;

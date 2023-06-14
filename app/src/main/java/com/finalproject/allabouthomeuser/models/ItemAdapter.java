@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -58,7 +59,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         holder.itemDescription.setText(item.getDescription());
         holder.itemPrice.setText(item.getPrice());
         holder.itemAdmin.setText(item.getAdminName());
-        holder.itemQuantity.setText(item.getQuantity());
+        holder.itemQuantity.setText(String.valueOf(item.getQuantity()));
+
         holder.addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,48 +100,47 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private void addToCart(String userId, Item product) {
-        db.collection("Users").document(userId)
+        DocumentReference cartItemRef = db.collection("Users")
+                .document(userId)
                 .collection("cart")
-                .document(product.getName())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Item existingProduct = document.toObject(Item.class);
-                            // Update quantity if needed here
+                .document(product.getName());
 
-                            db.collection("Users").document(userId)
-                                    .collection("cart")
-                                    .document(product.getName())
-                                    .set(existingProduct)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        updateAdminCart(userId, product.getAdminName(), product.getPrice());
-                                        showToast("Item added to cart successfully");
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.w(TAG, "Error updating document", e);
-                                    });
-                        } else {
-                            db.collection("Users").document(userId)
-                                    .collection("cart")
-                                    .document(product.getName())
-                                    .set(product)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                                        updateAdminCart(userId, product.getAdminName(), product.getPrice());
-                                        showToast("Item added to cart successfully");
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.w(TAG, "Error writing document", e);
-                                    });
-                        }
-                    } else {
-                        Log.w(TAG, "Error getting document.", task.getException());
-                    }
-                });
+        cartItemRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    int quantity = document.getLong("quantity").intValue();
+                    // Increase quantity by 1
+                    int newQuantity = quantity + 1;
+                    cartItemRef.update("quantity", newQuantity)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                updateAdminCart(userId, product.getAdminName(), product.getPrice());
+                                showToast("Item added to cart successfully");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error updating document", e);
+                            });
+                } else {
+                    // New product, set quantity to 1
+                    product.setQuantity(1);
+                    cartItemRef.set(product)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "DocumentSnapshot successfully written!");
+                                updateAdminCart(userId, product.getAdminName(), product.getPrice());
+                                showToast("Item added to cart successfully");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error writing document", e);
+                            });
+                }
+            } else {
+                Log.w(TAG, "Error getting document.", task.getException());
+            }
+        });
     }
+
+
 
     private void updateAdminCart(String userId, String adminId, String totalPrice) {
         db.collection("Users").document(userId)

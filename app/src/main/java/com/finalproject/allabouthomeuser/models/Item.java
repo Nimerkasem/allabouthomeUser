@@ -7,13 +7,13 @@ public class Item {
     private String description;
     private String price;
     private String adminName;
-    private String quantity;
+    private int quantity;
     private String image;
     public Item(String name){
         this.name=name;
     }
 
-    public Item(String name, String description, String price, String adminName, String quantity, String image) {
+    public Item(String name, String description, String price, String adminName, int quantity, String image) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -43,7 +43,7 @@ public class Item {
         return adminName;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
@@ -52,6 +52,10 @@ public class Item {
     }
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setQuantity(int newQuantity) {
+        this.quantity = newQuantity;
     }
 }
 

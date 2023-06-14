@@ -1,6 +1,6 @@
 package com.finalproject.allabouthomeuser.models;
 
-import android.graphics.Bitmap;
+
 
 public class myCart {
     private String name;
@@ -8,14 +8,14 @@ public class myCart {
     private String price;
     private String adminName;
     private String quantity;
-    private Bitmap image;
+    private String image;
     private double watt;
     private int shade; //4000,3000,6000
     private String type;//   שולחן שקוע צמוד תלוי
 
     public myCart(){}
 
-    public myCart(String name, String description, String price, String adminName, String quantity, Bitmap image, double watt, int shade, String type) {
+    public myCart(String name, String description, String price, String adminName, String quantity, String image, double watt, int shade, String type) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -63,15 +63,15 @@ public class myCart {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
+    public void setQuantity(Long quantity) {
+        this.quantity = String.valueOf(quantity != null ? quantity.intValue() : 0);
     }
 
-    public Bitmap getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

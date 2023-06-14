@@ -100,7 +100,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                     String description = document.getString("description");
                     String price = document.getString("price");
                     String adminName = document.getString("adminName");
-                    String quantity = document.getString("quantity");
+                    int quantity = document.getLong("quantity").intValue();
                     String imageURL = document.getString("imageURL");
 
                     if (imageURL != null && !imageURL.isEmpty()) {
@@ -141,7 +141,8 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                     String description = document.getString("description");
                     String price = document.getString("price");
                     String adminName = document.getString("adminName");
-                    String quantity = document.getString("quantity");
+                    int quantity = document.getLong("quantity").intValue();
+
                     String imageURL = document.getString("imageURL");  // image is a string URL now
 
                     // Create a new Item object with the retrieved data
