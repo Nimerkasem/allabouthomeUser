@@ -134,7 +134,7 @@ public class room {
                 return 6000;
             }
         }
-        return -1; // Return -1 for invalid or unrecognized room types
+        return -1; 
     }
     public static int getAngle(room room) {
         int Angle;
