@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class homeFragment extends Fragment implements View.OnClickListener {
-    private Button addToCart;
+
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private CollectionReference allProductsRef = db.collection("allproducts");
@@ -49,18 +49,18 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     FirebaseAuth auth = FirebaseAuth.getInstance();
     private ItemAdapter itemAdapter;
     private Button btnLightCalc ;
-    TextView itemName, itemImage, itemDescription, itemPrice, itemAdmin, itemQuantity, itemWatt;
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        itemList = new ArrayList<>(); // Initialize the list
+        itemList = new ArrayList<>();
 
 
         itemRecyclerView = view.findViewById(R.id.itemRecyclerView);
         itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        itemAdapter = new ItemAdapter(getActivity(), itemList); // Update this line
+        itemAdapter = new ItemAdapter(getActivity(), itemList);
         itemRecyclerView.setAdapter(itemAdapter);
 
         btnLightCalc = view.findViewById(R.id.btnLightCalc);
@@ -76,7 +76,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
 
 
     public void openLightCalcFragment() {
-        hideProductViews(); // Hide the product-related views
+        hideProductViews();
 
         Fragment lightCalcFragment = new LightCalcFragment();
         FragmentManager fragmentManager = getParentFragmentManager();
@@ -95,34 +95,39 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         allProductsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
-                    // Retrieve the data for each product
-                    String name = document.getString("name");
-                    String description = document.getString("description");
-                    String price = document.getString("price");
-                    String adminName = document.getString("adminName");
+
                     int quantity = document.getLong("quantity").intValue();
-                    String imageURL = document.getString("imageURL");
+                    if (quantity > 0) {
 
-                    if (imageURL != null && !imageURL.isEmpty()) {
-                        // Retrieve the image from storage
-                        StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
-                        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                            // Use the image bytes as needed
-                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        // Retrieve the data for each product
+                        String name = document.getString("name");
+                        String description = document.getString("description");
+                        String price = document.getString("price");
+                        String adminName = document.getString("adminName");
 
-                            // Create a new Item object with the retrieved data
-                            Item item = new Item(name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
+                        String imageURL = document.getString("imageURL");
 
-                            // Add the item to the list
-                            itemList.add(item);
+                        if (imageURL != null && !imageURL.isEmpty()) {
+                            // Retrieve the image from storage
+                            StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
+                            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                                // Use the image bytes as needed
+                                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                            // Notify the adapter that the data set has changed
-                            itemAdapter.notifyDataSetChanged();
-                        }).addOnFailureListener(exception -> {
-                            // Handle any errors that occurred while retrieving the image
-                        });
-                    } else {
-                        // Handle the case where imageURL is null or empty
+                                // Create a new Item object with the retrieved data
+                                Item item = new Item(name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
+
+                                // Add the item to the list
+                                itemList.add(item);
+
+                                // Notify the adapter that the data set has changed
+                                itemAdapter.notifyDataSetChanged();
+                            }).addOnFailureListener(exception -> {
+                                // Handle any errors that occurred while retrieving the image
+                            });
+                        } else {
+                            // Handle the case where imageURL is null or empty
+                        }
                     }
                 }
             } else {
@@ -136,23 +141,26 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         allLampsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
-                    // Retrieve the data for each lamp
-                    String name = document.getString("name");
-                    String description = document.getString("description");
-                    String price = document.getString("price");
-                    String adminName = document.getString("adminName");
                     int quantity = document.getLong("quantity").intValue();
+                    if (quantity > 0) {
+                        // Retrieve the data for each lamp
+                        String name = document.getString("name");
+                        String description = document.getString("description");
+                        String price = document.getString("price");
+                        String adminName = document.getString("adminName");
 
-                    String imageURL = document.getString("imageURL");  // image is a string URL now
 
-                    // Create a new Item object with the retrieved data
-                    Item item = new Item(name, description, price, adminName, quantity, imageURL); // use imageURL here
+                        String imageURL = document.getString("imageURL");  // image is a string URL now
 
-                    // Add the item to the list
-                    itemList.add(item);
+                        // Create a new Item object with the retrieved data
+                        Item item = new Item(name, description, price, adminName, quantity, imageURL); // use imageURL here
 
-                    // Notify the adapter that the data set has changed
-                    itemAdapter.notifyDataSetChanged();
+                        // Add the item to the list
+                        itemList.add(item);
+
+                        // Notify the adapter that the data set has changed
+                        itemAdapter.notifyDataSetChanged();
+                    }
                 }
             } else {
                 // Handle errors that occurred while fetching the lamps

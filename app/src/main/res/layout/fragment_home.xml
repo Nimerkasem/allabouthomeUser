@@ -24,11 +24,7 @@
             android:layout_marginTop="80dp"
             android:onClick="openLightCalcFragment" />
 
-        <Button
-            android:id="@+id/btnOrderByPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Order by Price" />
+
 
     </FrameLayout>
 
