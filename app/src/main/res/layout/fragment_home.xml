@@ -4,11 +4,18 @@
     android:layout_height="match_parent"
     tools:context=".fragments.homeFragment">
 
+    <Button
+        android:id="@+id/btnShowProducts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show  all Products"
+        android:layout_margin="16dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="50dp"
         tools:listitem="@layout/item_layout" />
 
     <FrameLayout
@@ -20,11 +27,9 @@
             android:id="@+id/btnLightCalc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Light Calc"
             android:layout_marginTop="80dp"
-            android:onClick="openLightCalcFragment" />
-
-
+            android:onClick="openLightCalcFragment"
+            android:text="Light Calc" />
 
     </FrameLayout>
 

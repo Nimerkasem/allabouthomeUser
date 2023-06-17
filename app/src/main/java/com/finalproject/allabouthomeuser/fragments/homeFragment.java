@@ -44,19 +44,19 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private CollectionReference allProductsRef = db.collection("allproducts");
     private CollectionReference allLampsRef = db.collection("alllamps");
-    private List<Item> itemList; // List to store the items
+    private List<Item> itemList;
     private RecyclerView itemRecyclerView;
-    FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private ItemAdapter itemAdapter;
-    private Button btnLightCalc ;
+    private Button btnLightCalc;
+    private Button btnShowProducts;
 
-
+    private boolean isProductListVisible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         itemList = new ArrayList<>();
-
 
         itemRecyclerView = view.findViewById(R.id.itemRecyclerView);
         itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -64,8 +64,13 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         itemRecyclerView.setAdapter(itemAdapter);
 
         btnLightCalc = view.findViewById(R.id.btnLightCalc);
+        btnShowProducts = view.findViewById(R.id.btnShowProducts);
 
         btnLightCalc.setOnClickListener(this);
+        btnShowProducts.setOnClickListener(this);
+
+        // Initially, hide the product list
+        hideProductList();
 
         getAllProducts();
         getAllLamps();
@@ -73,7 +78,39 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v == btnLightCalc) {
+            openLightCalcFragment();
+            hideButtons();
+        } else if (v == btnShowProducts) {
+            toggleProductListVisibility();
+            hideButtons();
+        }
+    }
 
+    private void hideButtons() {
+        btnLightCalc.setVisibility(View.GONE);
+        btnShowProducts.setVisibility(View.GONE);
+    }
+
+    private void toggleProductListVisibility() {
+        if (isProductListVisible) {
+            hideProductList();
+        } else {
+            showProductList();
+        }
+    }
+
+    private void hideProductList() {
+        itemRecyclerView.setVisibility(View.GONE);
+        isProductListVisible = false;
+    }
+
+    private void showProductList() {
+        itemRecyclerView.setVisibility(View.VISIBLE);
+        isProductListVisible = true;
+    }
 
     public void openLightCalcFragment() {
         hideProductViews();
@@ -88,7 +125,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
 
     private void hideProductViews() {
         itemRecyclerView.setVisibility(View.GONE);
-        btnLightCalc.setVisibility(View.GONE);
+        btnShowProducts.setVisibility(View.GONE);
     }
 
     private void getAllProducts() {
@@ -170,12 +207,6 @@ public class homeFragment extends Fragment implements View.OnClickListener {
 
 
 
-    @Override
-    public void onClick(View v) {
-        if (v == btnLightCalc)
-            openLightCalcFragment();
-
-    }
 
 //    private void addToCart() {
 //        String userId = auth.getCurrentUser().getUid();

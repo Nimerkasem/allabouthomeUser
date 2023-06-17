@@ -1,5 +1,7 @@
 package com.finalproject.allabouthomeuser.fragments;
 
+import static com.finalproject.allabouthomeuser.models.room.lamphanging;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+
 import com.finalproject.allabouthomeuser.models.room;
 import com.finalproject.allabouthomeuser.R;
 
@@ -24,8 +27,10 @@ public class LightCalcFragment extends Fragment {
     private Button btnCalculate;
     private TextView tvLedWatt;
     private TextView tvShade;
+    private EditText getheight;
 
     private TextView tvAngle;
+    private  TextView setheight;
     @Nullable
 
     @Override
@@ -38,6 +43,8 @@ public class LightCalcFragment extends Fragment {
         tvLedWatt = view.findViewById(R.id.tvLedWatt);
         tvShade = view.findViewById(R.id.tvShade);
         tvAngle =view.findViewById(R.id.tvAngle);
+        getheight=view.findViewById(R.id.getheight);
+        setheight=view.findViewById(R.id.setheight);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.room_kinds, android.R.layout.simple_spinner_item);
@@ -58,23 +65,26 @@ public class LightCalcFragment extends Fragment {
     private void calculateLedWatt() {
         double length = Double.parseDouble(etLength.getText().toString());
         double width = Double.parseDouble(etWidth.getText().toString());
+        double Height =Double.parseDouble(getheight.getText().toString());
         String kind = spRoomKind.getSelectedItem().toString();
-        room a = new room(length, width, kind);
+        room a = new room(length, width, Height,kind);
         double ledWatt = room.Ledwatt(a);
         int shade = room.getShade(a);
         int Angle =room.getAngle(a);
-        displayCalculationResult(ledWatt, shade,Angle);
+        String massege =lamphanging(a);
+        displayCalculationResult(ledWatt, shade,Angle,massege);
     }
 
 
 
-    private void displayCalculationResult(double ledWatt, int shade,int Angle) {
-        String ledWattMessage = "LED Watt: " + ledWatt;
-        String shadeMessage = "Shade: " + shade;
-        String AngleMassage ="Angle: " + Angle;
-        tvLedWatt.setText(ledWattMessage);
+    private void displayCalculationResult(double ledWatt, int shade,int Angle,String massege) {
+        //  String ledWattMessage = "LED Watt: " + ledWatt +" watt led";
+        String shadeMessage = "Shade: " + shade+"k";
+        String AngleMassage ="Angle: " + Angle+"°";
+        tvLedWatt.setText(String.valueOf(ledWatt));
         tvShade.setText(shadeMessage);
         tvAngle.setText(AngleMassage);
+        setheight.setText(massege);
     }
 
 }

@@ -19,6 +19,10 @@ public class room {
         this.width = width;
         this.kind = kind;
     }
+    public room( String kind,double height) {
+        this.height = height;
+        this.kind = kind;
+    }
 
     public double getLength() {
         return Length;
@@ -93,28 +97,49 @@ public class room {
     }
 
 
+    public static   String lamphanging(room room){
+        String massege =" ";
+
+        if(room.getHeight()<=3&&room.getHeight()>=2.5) {
+            massege ="The lamp can be suspended from the ceiling up to 0.5 meters";
+        }
+        else if((room.getHeight()<2.5&&room.getHeight()>=2.00)||
+                (room.getHeight()<2.00&&room.getHeight()>=1.80&&(room.getKind().contains("laundry room")
+                        ||room.getKind().contains("bedroom Ambient")))){
+            massege ="It is better for the lamp to be close to the ceiling of the room";
+        } else if (room.getHeight()>3) {
+            massege ="The lamp must hang from the ceiling at least "+ (room.getHeight() - 3) +" meters";
+
+        }
+        else {
+            massege ="Invalid: This height is less than the ceiling height can be";
+        }
+        return  massege;
+    }
+
+
 
     public static double Ledwatt(room room) {
-        double area = room.Length*room.width;
+        double area = room.getLength()*room.getWidth();
         double lux = getLux(room);
         double roomlux= area * lux;
-        return roomlux / 90;//90הוא ייחס וואט ללומן בנורת לד אחת
+        return  roomlux / 90;//90הוא ייחס וואט ללומן בנורת לד אחת
     }
-    public static int numberoflamps(room room ,Lamp lamp) {
-
-        return  (int) (room.Ledwatt(room)/lamp.getWatt()+1);
-    }
-    public static boolean Suitablelamps(room room , Lamp [] lamp) {//אם המנורות מספיקות לחדר
-        double lampswatt=0;
-        for(int i=0;i<lamp.length;i++) {
-            lampswatt+=lamp[i].getWatt();
-        }
-        if(room.Ledwatt(room)>=lampswatt)//  אם החדר בצבעים רגילים אז הטווח הוא בין העומצה הצרוכה ועד כ 30% יותר
-            //כן, זה נכון. הטווח המומלץ לעוצמת האור בחדר פנים הוא בין העוצמה המינימלית הנדרשת למטרת החדר ועד כ-30% יותר, ובמקרה של חדר עם צבעים כהים הטווח יכול להיות כפול מזה. מומלץ להימנע משימוש בעוצמת אור המוגברת מדי עבור החדר, מכיוון שזה עשוי להיות מפריע וליצור סנוורות וצלליות לא רצויות
-            //אם צבעים כהים עד כפול!!לשים לב למקרה של אור חזק מדי (סנוור)
-            return true;
-        return false;
-    }
+    //    public static int numberoflamps(room room ,Lamp lamp) {
+//
+//        return  (int) (room.Ledwatt(room)/lamp.getWatt()+1);
+//    }
+//    public static boolean Suitablelamps(room room , Lamp [] lamp) {//אם המנורות מספיקות לחדר
+//        double lampswatt=0;
+//        for(int i=0;i<lamp.length;i++) {
+//            lampswatt+=lamp[i].getWatt();
+//        }
+//        if(room.Ledwatt(room)>=lampswatt)//  אם החדר בצבעים רגילים אז הטווח הוא בין העומצה הצרוכה ועד כ 30% יותר
+//            //כן, זה נכון. הטווח המומלץ לעוצמת האור בחדר פנים הוא בין העוצמה המינימלית הנדרשת למטרת החדר ועד כ-30% יותר, ובמקרה של חדר עם צבעים כהים הטווח יכול להיות כפול מזה. מומלץ להימנע משימוש בעוצמת אור המוגברת מדי עבור החדר, מכיוון שזה עשוי להיות מפריע וליצור סנוורות וצלליות לא רצויות
+//            //אם צבעים כהים עד כפול!!לשים לב למקרה של אור חזק מדי (סנוור)
+//            return true;
+//        return false;
+//    }
     public static int getShade(room room) {
         String kind = room.getKind();
         if (kind.contains("Ambient")) {
@@ -134,7 +159,7 @@ public class room {
                 return 6000;
             }
         }
-        return -1; 
+        return -1;
     }
     public static int getAngle(room room) {
         int Angle;
