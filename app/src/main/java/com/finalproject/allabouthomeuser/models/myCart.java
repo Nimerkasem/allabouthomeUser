@@ -10,8 +10,8 @@ public class myCart {
     private String quantity;
     private String image;
     private double watt;
-    private int shade; //4000,3000,6000
-    private String type;//   שולחן שקוע צמוד תלוי
+    private int shade;
+    private String type;
 
     public myCart(){}
 

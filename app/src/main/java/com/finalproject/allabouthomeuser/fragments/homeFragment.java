@@ -145,30 +145,30 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String imageURL = document.getString("imageURL");
 
                         if (imageURL != null && !imageURL.isEmpty()) {
-                            // Retrieve the image from storage
+
                             StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                                // Use the image bytes as needed
+
                                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                                // Create a new Item object with the retrieved data
+
                                 Item item = new Item(name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
 
-                                // Add the item to the list
+
                                 itemList.add(item);
 
-                                // Notify the adapter that the data set has changed
+
                                 itemAdapter.notifyDataSetChanged();
                             }).addOnFailureListener(exception -> {
-                                // Handle any errors that occurred while retrieving the image
+
                             });
                         } else {
-                            // Handle the case where imageURL is null or empty
+
                         }
                     }
                 }
             } else {
-                // Handle errors that occurred while fetching the products
+
             }
         });
     }
@@ -187,20 +187,20 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String adminName = document.getString("adminName");
 
 
-                        String imageURL = document.getString("imageURL");  // image is a string URL now
+                        String imageURL = document.getString("imageURL");
 
-                        // Create a new Item object with the retrieved data
-                        Item item = new Item(name, description, price, adminName, quantity, imageURL); // use imageURL here
 
-                        // Add the item to the list
+                        Item item = new Item(name, description, price, adminName, quantity, imageURL);
+
+
                         itemList.add(item);
 
-                        // Notify the adapter that the data set has changed
+
                         itemAdapter.notifyDataSetChanged();
                     }
                 }
             } else {
-                // Handle errors that occurred while fetching the lamps
+
             }
         });
     }

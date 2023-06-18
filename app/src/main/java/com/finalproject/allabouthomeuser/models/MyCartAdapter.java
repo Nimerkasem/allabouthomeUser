@@ -49,7 +49,6 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         holder.quantity.setText(item.getQuantity());
         holder.desc.setText(item.getDescription());
         mAuth = FirebaseAuth.getInstance();
-        String userId = mAuth.getCurrentUser().getUid();
         Glide.with(context).load(item.getImage()).into(holder.image);
 
         holder.increaseQuantityButton.setOnClickListener(new View.OnClickListener() {
