@@ -98,4 +98,7 @@ public class myCart {
     public void setType(String type) {
         this.type = type;
     }
+    public long getQuantityAsLong() {
+        return Long.parseLong(quantity);
+    }
 }

@@ -97,7 +97,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         }
     }
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private void addToCart(String userId, Item product) {
         DocumentReference cartItemRef = db.collection("Users")
@@ -142,7 +142,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
 
 
-    private void updateAdminCart(String userId, String adminId, String totalPrice) {
+    public static void updateAdminCart(String userId, String adminId, String totalPrice) {
         db.collection("Users").document(userId)
                 .collection("adminCart")
                 .document(adminId)
