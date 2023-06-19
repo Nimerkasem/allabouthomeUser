@@ -45,8 +45,9 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     public void onBindViewHolder(@NonNull MyCartAdapter.ViewHolder holder, int position) {
         myCart item = list.get(holder.getAdapterPosition());
         holder.name.setText(item.getName());
-        holder.price.setText(item.getPrice());
-        holder.quantity.setText(item.getQuantity());
+        holder.price.setText(String.valueOf(item.getPrice()));
+        holder.quantity.setText(String.valueOf(item.getQuantity()));
+
         holder.desc.setText(item.getDescription());
         mAuth = FirebaseAuth.getInstance();
         Glide.with(context).load(item.getImage()).into(holder.image);
@@ -57,7 +58,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                 int quantity = Integer.parseInt(holder.quantity.getText().toString());
                 quantity++;
                 holder.quantity.setText(String.valueOf(quantity));
-                item.setQuantity(Long.valueOf(String.valueOf(quantity)));
+                item.setQuantity(quantity);
 
                 updateCartItem(item);
             }
@@ -70,7 +71,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                 if (quantity > 1) {
                     quantity--;
                     holder.quantity.setText(String.valueOf(quantity));
-                    item.setQuantity(Long.valueOf(String.valueOf(quantity)));
+                    item.setQuantity(quantity);
 
                     updateCartItem(item);
                 }
@@ -103,18 +104,18 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                     if (documentSnapshot.exists()) {
                         myCart cartItem = documentSnapshot.toObject(myCart.class);
                         if (cartItem != null) {
-                            int originalQuantity = Integer.parseInt(cartItem.getQuantity());
-                            int newQuantity = Integer.parseInt(item.getQuantity());
-                            int price = Integer.parseInt(item.getPrice());
+                            int originalQuantity = cartItem.getQuantity();
+                            int newQuantity = item.getQuantity();
+                            int price = item.getPrice();
                             int quantityDiff = newQuantity - originalQuantity;
                             int totalDiff = price * quantityDiff;
 
-                            cartItemRef.update("quantity", item.getQuantityAsLong())
+                            cartItemRef.update("quantity", item.getQuantity())
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d(TAG, "Cart item quantity successfully updated!");
 
                                         // Update the admin cart based on the quantity difference
-                                        updateAdminCart(userId, item.getAdminName(), String.valueOf(totalDiff));
+                                        updateAdminCart(userId, item.getAdminName(), totalDiff);
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.w(TAG, "Error updating cart item quantity", e);
@@ -138,10 +139,10 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         cartItemRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Cart item successfully removed!");
-                    int quantity = Integer.parseInt(item.getQuantity());
-                    int price = Integer.parseInt(item.getPrice());
+                    int quantity = item.getQuantity();
+                    int price = item.getPrice();
                     int total = quantity * price;
-                    updateAdminCart(userId, item.getAdminName(), String.valueOf(-total));
+                    updateAdminCart(userId, item.getAdminName(), -total);
 
                 })
                 .addOnFailureListener(e -> {

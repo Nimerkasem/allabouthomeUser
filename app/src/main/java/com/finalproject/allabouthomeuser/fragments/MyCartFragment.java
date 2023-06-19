@@ -79,8 +79,8 @@ public class MyCartFragment extends Fragment {
     private double calculateTotalPrice(List<myCart> cartItems) {
         double totalPrice = 0;
         for (myCart item : cartItems) {
-            double itemPrice = Double.parseDouble(item.getPrice());
-            double itemQuantity = Double.parseDouble(item.getQuantity());
+            double itemPrice = item.getPrice();
+            double itemQuantity = item.getQuantity();
             totalPrice += (itemPrice * itemQuantity);
         }
         return totalPrice;

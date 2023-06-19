@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 public class Item {
     private String name;
     private String description;
-    private String price;
+    private int price;
     private String adminName;
     private int quantity;
     private String image;
@@ -13,7 +13,7 @@ public class Item {
         this.name=name;
     }
 
-    public Item(String name, String description, String price, String adminName, int quantity, String image) {
+    public Item(String name, String description, int price, String adminName, int quantity, String image) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -33,7 +33,7 @@ public class Item {
         return description;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 

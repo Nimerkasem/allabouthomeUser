@@ -17,10 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.finalproject.allabouthomeuser.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -57,7 +53,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
         holder.itemName.setText(item.getName());
         holder.itemDescription.setText(item.getDescription());
-        holder.itemPrice.setText(item.getPrice());
+        holder.itemPrice.setText(String.valueOf(item.getPrice()));
         holder.itemAdmin.setText(item.getAdminName());
         holder.itemQuantity.setText(String.valueOf(item.getQuantity()));
 
@@ -142,7 +138,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
 
 
-    public static void updateAdminCart(String userId, String adminId, String totalPrice) {
+    public static void updateAdminCart(String userId, String adminId, int totalPrice) {
         db.collection("Users").document(userId)
                 .collection("adminCart")
                 .document(adminId)
@@ -168,7 +164,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                 if (adminCart.containsKey(adminId)) {
                                     // Update total price
                                     int existingPrice = adminCart.get(adminId);
-                                    int totalPriceInt = Integer.parseInt(totalPrice);
+                                    int totalPriceInt = totalPrice;
                                     int newPrice = existingPrice + totalPriceInt;
                                     adminCart.put(adminId, newPrice);
                                 }
@@ -187,7 +183,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         } else {
                             // Create new admin cart
                             HashMap<String, Integer> adminCart = new HashMap<>();
-                            adminCart.put(adminId, Integer.parseInt(totalPrice));
+                            adminCart.put(adminId, totalPrice);
 
                             db.collection("Users").document(userId)
                                     .collection("adminCart")

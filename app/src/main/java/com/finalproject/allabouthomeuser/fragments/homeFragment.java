@@ -139,7 +139,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         // Retrieve the data for each product
                         String name = document.getString("name");
                         String description = document.getString("description");
-                        String price = document.getString("price");
+                        int price = document.getLong("price").intValue();
                         String adminName = document.getString("adminName");
 
                         String imageURL = document.getString("imageURL");
@@ -149,7 +149,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                             StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
 
-                                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                             //   Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
 
                                 Item item = new Item(name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
@@ -183,7 +183,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         // Retrieve the data for each lamp
                         String name = document.getString("name");
                         String description = document.getString("description");
-                        String price = document.getString("price");
+                        int price = document.getLong("price").intValue();
                         String adminName = document.getString("adminName");
 
 
