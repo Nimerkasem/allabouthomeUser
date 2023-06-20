@@ -132,7 +132,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         allProductsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
-
+                    String itemUid = document.getId();
                     int quantity = document.getLong("quantity").intValue();
                     if (quantity > 0) {
 
@@ -152,7 +152,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                              //   Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
 
-                                Item item = new Item(name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
+                                Item item = new Item(itemUid ,name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
 
 
                                 itemList.add(item);
@@ -178,6 +178,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         allLampsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
+                    String itemUid = document.getId();
                     int quantity = document.getLong("quantity").intValue();
                     if (quantity > 0) {
                         // Retrieve the data for each lamp
@@ -190,7 +191,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String imageURL = document.getString("imageURL");
 
 
-                        Item item = new Item(name, description, price, adminName, quantity, imageURL);
+                        Item item = new Item(itemUid, name, description, price, adminName, quantity, imageURL);
 
 
                         itemList.add(item);

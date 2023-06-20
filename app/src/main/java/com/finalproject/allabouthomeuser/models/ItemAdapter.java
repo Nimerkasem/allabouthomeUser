@@ -99,7 +99,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         DocumentReference cartItemRef = db.collection("Users")
                 .document(userId)
                 .collection("cart")
-                .document(product.getName());
+                .document(product.getUid()); // Use itemUid as the document ID
 
         cartItemRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

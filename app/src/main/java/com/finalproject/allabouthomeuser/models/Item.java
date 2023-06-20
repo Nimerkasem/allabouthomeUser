@@ -3,6 +3,7 @@ package com.finalproject.allabouthomeuser.models;
 import android.graphics.Bitmap;
 
 public class Item {
+    private String uid;
     private String name;
     private String description;
     private int price;
@@ -13,16 +14,21 @@ public class Item {
         this.name=name;
     }
 
-    public Item(String name, String description, int price, String adminName, int quantity, String image) {
+    public Item(String uid,String name, String description, int price, String adminName, int quantity, String image) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.adminName = adminName;
         this.quantity = quantity;
         this.image = image;
+        this.uid=uid;
     }
 
     public Item() {
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public String getName() {
