@@ -97,7 +97,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         DocumentReference cartItemRef = db.collection("Users")
                 .document(userId)
                 .collection("cart")
-                .document(item.getName());
+                .document(item.getUid());
 
         cartItemRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -134,7 +134,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         DocumentReference cartItemRef = db.collection("Users")
                 .document(userId)
                 .collection("cart")
-                .document(item.getName());
+                .document(item.getUid());
 
         cartItemRef.delete()
                 .addOnSuccessListener(aVoid -> {

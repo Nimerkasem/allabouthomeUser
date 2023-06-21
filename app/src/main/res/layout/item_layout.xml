@@ -78,6 +78,15 @@
         android:textColor="@color/purple_500"
         android:layout_toEndOf="@+id/itemImage"
         tools:text="Item watt" />
+    <TextView
+        android:id="@+id/itemShade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemAdmin"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/purple_500"
+        android:layout_toEndOf="@+id/itemImage"
+        tools:text="Item Shade" />
 
     <Button
         android:id="@+id/addtocart"

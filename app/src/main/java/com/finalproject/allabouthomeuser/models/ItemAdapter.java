@@ -57,6 +57,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         holder.itemAdmin.setText(item.getAdminName());
         holder.itemQuantity.setText(String.valueOf(item.getQuantity()));
 
+
         holder.addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

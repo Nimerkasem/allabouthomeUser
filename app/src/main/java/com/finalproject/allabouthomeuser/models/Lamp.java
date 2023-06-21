@@ -2,25 +2,21 @@ package com.finalproject.allabouthomeuser.models;
 
 import android.graphics.Bitmap;
 
-public class Lamp extends Item{
+public class Lamp extends Item {
     private double watt;
-    private int shade; //4000,3000,6000
-    private String type;//   שולחן שקוע צמוד תלוי
+    private int shade; // 4000, 3000, 6000
+    private String type; // שולחן שקוע צמוד תלוי
 
-    public Lamp(String uid,String name, String description, int price, String adminName, int quantity, String image, double watt, int shade, String type) {
-        super(uid,name, description, price, adminName, quantity, image);
+    public Lamp(String uid, String name, String description, int price, String adminName, int quantity, String image, double watt, int shade) {
+        super(uid, name, description, price, adminName, quantity, image);
         this.watt = watt;
         this.shade = shade;
-        this.type = type;
-    }
-
-    public Lamp(double watt, String name) {
-        super(name);
-        this.watt = watt;
-
     }
 
     public Lamp() {
+    }
+
+    public Lamp(double watt, String name) {
     }
 
     public double getWatt() {

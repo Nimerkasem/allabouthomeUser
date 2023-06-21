@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.ItemAdapter;
+import com.finalproject.allabouthomeuser.models.Lamp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -149,7 +150,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                             StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
 
-                             //   Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                //   Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
 
                                 Item item = new Item(itemUid ,name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
@@ -186,12 +187,14 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String description = document.getString("description");
                         int price = document.getLong("price").intValue();
                         String adminName = document.getString("adminName");
+                        double shade = document.getLong("shade");
+                        int watt = document.getLong("wattage").intValue();
 
 
                         String imageURL = document.getString("imageURL");
 
 
-                        Item item = new Item(itemUid, name, description, price, adminName, quantity, imageURL);
+                        Item item = new Lamp(itemUid, name, description, price, adminName, quantity, imageURL,shade,watt);
 
 
                         itemList.add(item);
