@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/input_design"
+    android:layout_margin="15dp"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/lampName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_500"
+        android:layout_marginStart="8dp"
+        android:textSize="20dp"
+        android:layout_marginTop="15dp"
+        android:textStyle="bold"
+        tools:text="lamp Name" />
+
+    <ImageView
+        android:id="@+id/lampImage"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_below="@id/lampName"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/placeholder_image" />
+
+    <TextView
+        android:id="@+id/lampDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/lampImage"
+        android:layout_below="@id/lampName"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/purple_500"
+        tools:text="lamp Description" />
+
+    <TextView
+        android:id="@+id/lampPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lampDescription"
+        android:layout_toEndOf="@+id/lampImage"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/purple_500"
+        tools:text="lamp Price" />
+
+    <TextView
+        android:id="@+id/lampAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lampPrice"
+        android:layout_toEndOf="@+id/lampImage"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/purple_500"
+        tools:text="Admin Name" />
+
+    <TextView
+        android:id="@+id/lampQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lampAdmin"
+        android:layout_toEndOf="@+id/lampImage"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/purple_500"
+        tools:text="lamp Quantity" />
+
+    <TextView
+        android:id="@+id/lampWatt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lampQuantity"
+        android:layout_toEndOf="@+id/lampImage"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/purple_500"
+        tools:text="lamp watt" />
+
+    <TextView
+        android:id="@+id/lampShade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lampWatt"
+        android:layout_toEndOf="@+id/lampImage"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/purple_500"
+        tools:text="lamp Shade" />
+
+    <Button
+        android:id="@+id/add"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:background="@drawable/buttons"
+        android:text="add"
+        android:textColor="@color/white"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="50dp"
+        android:layout_toEndOf="@+id/lampImage"
+        android:padding="5dp"
+        android:layout_below="@id/lampShade" />
+
+</RelativeLayout>

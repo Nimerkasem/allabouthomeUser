@@ -1,5 +1,7 @@
 package com.finalproject.allabouthomeuser.models;
 
+import java.util.List;
+
 public class room {
     private double Length;
     private double width;
@@ -14,10 +16,10 @@ public class room {
         this.kind = kind;
     }
 
-    public room(double length, double width, String kind) {
+    public room(double length, double width, double height) {
         Length = length;
         this.width = width;
-        this.kind = kind;
+        this.height = height;
     }
     public room( String kind,double height) {
         this.height = height;
@@ -125,21 +127,27 @@ public class room {
         double roomlux= area * lux;
         return  roomlux / 90;//90הוא ייחס וואט ללומן בנורת לד אחת
     }
-    //    public static int numberoflamps(room room ,Lamp lamp) {
-//
-//        return  (int) (room.Ledwatt(room)/lamp.getWatt()+1);
-//    }
-//    public static boolean Suitablelamps(room room , Lamp [] lamp) {//אם המנורות מספיקות לחדר
-//        double lampswatt=0;
-//        for(int i=0;i<lamp.length;i++) {
-//            lampswatt+=lamp[i].getWatt();
-//        }
-//        if(room.Ledwatt(room)>=lampswatt)//  אם החדר בצבעים רגילים אז הטווח הוא בין העומצה הצרוכה ועד כ 30% יותר
-//            //כן, זה נכון. הטווח המומלץ לעוצמת האור בחדר פנים הוא בין העוצמה המינימלית הנדרשת למטרת החדר ועד כ-30% יותר, ובמקרה של חדר עם צבעים כהים הטווח יכול להיות כפול מזה. מומלץ להימנע משימוש בעוצמת אור המוגברת מדי עבור החדר, מכיוון שזה עשוי להיות מפריע וליצור סנוורות וצלליות לא רצויות
-//            //אם צבעים כהים עד כפול!!לשים לב למקרה של אור חזק מדי (סנוור)
-//            return true;
-//        return false;
-//    }
+        public static int numberoflamps(room room ,Lamp lamp) {
+
+        return  (int) (Ledwatt(room)/lamp.getWatt()+1);
+    }
+    public static boolean Suitablelamps(room room, List<Lamp> lamp) {
+        if (lamp == null) {
+            return false;
+        }
+
+        double lampswatt = 0;
+        if (lamp.size() > 1) {
+            for (int i = 0; i < lamp.size(); i++) {
+                lampswatt += lamp.get(i).getWatt();
+            }
+            if (Ledwatt(room) >= lampswatt) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static int getShade(room room) {
         String kind = room.getKind();
         if (kind.contains("Ambient")) {

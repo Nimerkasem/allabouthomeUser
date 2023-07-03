@@ -10,11 +10,13 @@ public class Item {
     private String adminName;
     private int quantity;
     private String image;
+    private String adminuid;
+
     public Item(String name){
         this.name=name;
     }
 
-    public Item(String uid,String name, String description, int price, String adminName, int quantity, String image) {
+    public Item(String uid,String adminuid,String name, String description, int price, String adminName, int quantity, String image) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -22,6 +24,7 @@ public class Item {
         this.quantity = quantity;
         this.image = image;
         this.uid=uid;
+        this.adminuid=adminuid;
     }
 
     public Item() {
@@ -43,7 +46,9 @@ public class Item {
         return price;
     }
 
-
+    public String getAdminuid() {
+        return adminuid;
+    }
 
     public String getAdminName() {
         return adminName;

@@ -142,6 +142,8 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String description = document.getString("description");
                         int price = document.getLong("price").intValue();
                         String adminName = document.getString("adminName");
+                        String adminuid = document.getString("adminUID");
+
 
                         String imageURL = document.getString("imageURL");
 
@@ -150,10 +152,8 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                             StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
 
-                                //   Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-
-                                Item item = new Item(itemUid ,name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
+                                Item item = new Item(itemUid ,adminuid,name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
 
 
                                 itemList.add(item);
@@ -187,6 +187,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String description = document.getString("description");
                         int price = document.getLong("price").intValue();
                         String adminName = document.getString("adminName");
+                        String adminuid = document.getString("adminUID");
                         double shade = document.getLong("shade");
                         int watt = document.getLong("wattage").intValue();
 
@@ -194,7 +195,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         String imageURL = document.getString("imageURL");
 
 
-                        Item item = new Lamp(itemUid, name, description, price, adminName, quantity, imageURL,shade,watt);
+                        Item item = new Lamp(itemUid,adminuid, name, description, price, adminName, quantity, imageURL,shade,watt);
 
 
                         itemList.add(item);

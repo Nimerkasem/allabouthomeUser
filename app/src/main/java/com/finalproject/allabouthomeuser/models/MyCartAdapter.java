@@ -115,7 +115,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                                         Log.d(TAG, "Cart item quantity successfully updated!");
 
                                         // Update the admin cart based on the quantity difference
-                                        updateAdminCart(userId, item.getAdminName(), totalDiff);
+                                        updateAdminCart(userId, item.getAdminuid(), totalDiff);
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.w(TAG, "Error updating cart item quantity", e);
@@ -142,7 +142,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                     int quantity = item.getQuantity();
                     int price = item.getPrice();
                     int total = quantity * price;
-                    updateAdminCart(userId, item.getAdminName(), -total);
+                    updateAdminCart(userId, item.getAdminuid(), -total);
 
                 })
                 .addOnFailureListener(e -> {

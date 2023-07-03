@@ -7,8 +7,8 @@ public class Lamp extends Item {
     private int shade; // 4000, 3000, 6000
     private String type; // שולחן שקוע צמוד תלוי
 
-    public Lamp(String uid, String name, String description, int price, String adminName, int quantity, String image, double watt, int shade) {
-        super(uid, name, description, price, adminName, quantity, image);
+    public Lamp(String uid,String adminuid, String name, String description, int price, String adminName, int quantity, String image, double watt, int shade) {
+        super(uid,adminuid, name, description, price, adminName, quantity, image);
         this.watt = watt;
         this.shade = shade;
     }

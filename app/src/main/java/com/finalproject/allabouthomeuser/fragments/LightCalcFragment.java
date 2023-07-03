@@ -1,5 +1,6 @@
 package com.finalproject.allabouthomeuser.fragments;
 
+import static com.finalproject.allabouthomeuser.models.room.Suitablelamps;
 import static com.finalproject.allabouthomeuser.models.room.lamphanging;
 
 import android.os.Bundle;
@@ -11,26 +12,31 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
+import com.finalproject.allabouthomeuser.models.Lamp;
 import com.finalproject.allabouthomeuser.models.room;
 import com.finalproject.allabouthomeuser.R;
+
+import java.util.List;
 
 public class LightCalcFragment extends Fragment {
     private EditText etLength;
     private EditText etWidth;
     private Spinner spRoomKind;
-    private Button btnCalculate;
+    private Button btnCalculate ,check;
     private TextView tvLedWatt;
     private TextView tvShade;
     private EditText getheight;
 
     private TextView tvAngle;
     private  TextView setheight;
+    List<Lamp> lamp ;
     @Nullable
 
     @Override
@@ -45,6 +51,7 @@ public class LightCalcFragment extends Fragment {
         tvAngle =view.findViewById(R.id.tvAngle);
         getheight=view.findViewById(R.id.getheight);
         setheight=view.findViewById(R.id.setheight);
+        check =view.findViewById(R.id.check);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.room_kinds, android.R.layout.simple_spinner_item);
@@ -55,6 +62,12 @@ public class LightCalcFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 calculateLedWatt();
+            }
+        });
+        check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                matching();
             }
         });
 
@@ -74,6 +87,32 @@ public class LightCalcFragment extends Fragment {
         String massege =lamphanging(a);
         displayCalculationResult(ledWatt, shade,Angle,massege);
     }
+    public void setLampList(List<Lamp> lamps) {
+        lamp = lamps;
+    }
+
+
+    private void matching() {
+        double length = Double.parseDouble(etLength.getText().toString());
+        double width = Double.parseDouble(etWidth.getText().toString());
+        double Height = Double.parseDouble(getheight.getText().toString());
+        room a = new room(length, width, Height);
+     if (Suitablelamps(a,lamp))
+         showMessage("lamps match thr room");
+     else {
+         showMessage("lamps DOESN'T match the room");
+
+     }
+      
+    }
+
+  
+
+    private void showMessage(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+    }
+    
+
 
 
 

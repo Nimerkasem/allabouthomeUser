@@ -15,6 +15,7 @@ import com.finalproject.allabouthomeuser.fragments.ProfileFragment;
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.databinding.ActivityHomeBinding;
 import com.finalproject.allabouthomeuser.fragments.homeFragment;
+import com.finalproject.allabouthomeuser.fragments.lampFragment;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -29,6 +30,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         replaceFragment(new homeFragment());
 
+        binding.openLampFragmentButton.setOnClickListener(v -> {
+            replaceFragment(new lampFragment());
+        });
 
         binding.bottomnavigation.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {

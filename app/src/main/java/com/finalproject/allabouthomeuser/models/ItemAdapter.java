@@ -80,7 +80,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         TextView itemPrice;
         TextView itemAdmin;
         TextView itemQuantity;
-        Button addToCart; // use standard android Button
+        Button addToCart;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,24 +107,24 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     int quantity = document.getLong("quantity").intValue();
-                    // Increase quantity by 1
+
                     int newQuantity = quantity + 1;
                     cartItemRef.update("quantity", newQuantity)
                             .addOnSuccessListener(aVoid -> {
                                 Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                updateAdminCart(userId, product.getAdminName(), product.getPrice());
+                                updateAdminCart(userId, product.getAdminuid(), product.getPrice());
                                 showToast("Item added to cart successfully");
                             })
                             .addOnFailureListener(e -> {
                                 Log.w(TAG, "Error updating document", e);
                             });
                 } else {
-                    // New product, set quantity to 1
+
                     product.setQuantity(1);
                     cartItemRef.set(product)
                             .addOnSuccessListener(aVoid -> {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                updateAdminCart(userId, product.getAdminName(), product.getPrice());
+                                updateAdminCart(userId, product.getAdminuid(), product.getPrice());
                                 showToast("Item added to cart successfully");
                             })
                             .addOnFailureListener(e -> {
