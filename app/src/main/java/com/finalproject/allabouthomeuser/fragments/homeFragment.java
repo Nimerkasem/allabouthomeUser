@@ -15,28 +15,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.ItemAdapter;
 import com.finalproject.allabouthomeuser.models.Lamp;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
+
 import java.util.List;
 
 public class homeFragment extends Fragment implements View.OnClickListener {
@@ -153,7 +143,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
 
 
-                                Item item = new Item(itemUid ,adminuid,name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
+                                Item item = new Item(itemUid, adminuid, name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
 
 
                                 itemList.add(item);
@@ -188,14 +178,14 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                         int price = document.getLong("price").intValue();
                         String adminName = document.getString("adminName");
                         String adminuid = document.getString("adminUID");
-                        double shade = document.getLong("shade");
-                        int watt = document.getLong("wattage").intValue();
+                        int shade = Math.toIntExact(document.getLong("shade"));
+                        double watt = document.getLong("wattage").intValue();
 
 
                         String imageURL = document.getString("imageURL");
 
 
-                        Item item = new Lamp(itemUid,adminuid, name, description, price, adminName, quantity, imageURL,shade,watt);
+                        Item item = new Lamp(itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
 
 
                         itemList.add(item);
@@ -211,31 +201,4 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
-
-//    private void addToCart() {
-//        String userId = auth.getCurrentUser().getUid();
-//        String saveCurrDate, saveCurrTime;
-//        Calendar calDate = Calendar.getInstance();
-//        SimpleDateFormat currDate = new SimpleDateFormat("MM/dd/yyyy");
-//        saveCurrDate = currDate.format(calDate.getTime());
-//        SimpleDateFormat currTime = new SimpleDateFormat("HH:mm:ss a");
-//        saveCurrTime = currDate.format(calDate.getTime());
-//
-//        final HashMap<String, Object> cartMap = new HashMap<>();
-//        cartMap.put("Time", saveCurrTime);
-//        cartMap.put("Date", saveCurrDate);
-//        cartMap.put("itemName", itemName.getText().toString());
-//        cartMap.put("itemPrice", itemPrice.getText().toString());
-//
-//
-//        db.collection("Users").document(userId).collection("cart").add(cartMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentReference> task) {
-//                        Toast.makeText(getActivity(), "Added to cart", Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
-//
-//    }
 }

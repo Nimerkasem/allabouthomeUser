@@ -16,7 +16,10 @@ public class Lamp extends Item {
     public Lamp() {
     }
 
-    public Lamp(double watt, String name) {
+    public Lamp(double watt, String name,double shade) {
+        super(name );
+        this.watt=watt;
+        this.shade= (int) shade;
     }
 
     public double getWatt() {

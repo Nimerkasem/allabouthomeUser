@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,17 +23,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder> {
     private Context context;
     private List<myCart> list;
     private FirebaseAuth mAuth;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public MyCartAdapter(Context context, List<myCart> list) {
         this.context = context;
         this.list = list;
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -42,21 +46,29 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         return new ViewHolder(itemView);
     }
 
+    @Override
     public void onBindViewHolder(@NonNull MyCartAdapter.ViewHolder holder, int position) {
-        myCart item = list.get(holder.getAdapterPosition());
+        myCart item = list.get(position);
         holder.name.setText(item.getName());
         holder.price.setText(String.valueOf(item.getPrice()));
         holder.quantity.setText(String.valueOf(item.getQuantity()));
-
         holder.desc.setText(item.getDescription());
         mAuth = FirebaseAuth.getInstance();
         Glide.with(context).load(item.getImage()).into(holder.image);
 
-        holder.increaseQuantityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int quantity = Integer.parseInt(holder.quantity.getText().toString());
-                quantity++;
+        holder.increaseQuantityButton.setOnClickListener(v -> {
+            int quantity = Integer.parseInt(holder.quantity.getText().toString());
+            quantity++;
+            holder.quantity.setText(String.valueOf(quantity));
+            item.setQuantity(quantity);
+
+            updateCartItem(item);
+        });
+
+        holder.decreaseQuantityButton.setOnClickListener(v -> {
+            int quantity = Integer.parseInt(holder.quantity.getText().toString());
+            if (quantity > 1) {
+                quantity--;
                 holder.quantity.setText(String.valueOf(quantity));
                 item.setQuantity(quantity);
 
@@ -64,34 +76,77 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
             }
         });
 
-        holder.decreaseQuantityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int quantity = Integer.parseInt(holder.quantity.getText().toString());
-                if (quantity > 1) {
-                    quantity--;
-                    holder.quantity.setText(String.valueOf(quantity));
-                    item.setQuantity(quantity);
+        holder.remove.setOnClickListener(v -> {
+            list.remove(position);
+            notifyDataSetChanged();
 
-                    updateCartItem(item);
-                }
-            }
+            removeCartItem(item);
         });
 
-        holder.remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    list.remove(position);
-                    notifyDataSetChanged();
+        holder.addButton.setOnClickListener(v -> {
+            if (item instanceof Lamp) {
+                Lamp lamp = (Lamp) item;
+                String lampUid = lamp.getUid();
 
-                    removeCartItem(item);
-                }
+                String userId = mAuth.getCurrentUser().getUid();
+
+                db.collection("Users").document(userId).collection("cart").document(lampUid)
+                        .get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String lampName = documentSnapshot.getString("name");
+                                double wattage = documentSnapshot.getDouble("watt");
+                                int shade = documentSnapshot.getLong("shade").intValue();
+
+                                Map<String, Object> lampData = new HashMap<>();
+                                lampData.put("uid", lampUid);
+                                lampData.put("name", lampName);
+                                lampData.put("wattage", wattage);
+                                lampData.put("shade", shade);
+
+                                db.collection("Users").document(userId).collection("roomlamps")
+                                        .add(lampData)
+                                        .addOnSuccessListener(documentReference -> {
+                                            showMessage("Lamp added to roomlamps.");
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            showMessage("Failed to add lamp to roomlamps: " + e.getMessage());
+                                        });
+                            } else {
+                                showMessage("Lamp not found in the user's cart.");
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            showMessage("Error retrieving lamp details: " + e.getMessage());
+                        });
+            } else {
+                showMessage("Selected item is not a lamp.");
             }
         });
     }
+        @Override
+    public int getItemCount() {
+        return list.size();
+    }
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView name, desc, price, quantity;
+        ImageView image;
+        Button increaseQuantityButton, decreaseQuantityButton, remove, addButton;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            name = itemView.findViewById(R.id.textViewProductName);
+            desc = itemView.findViewById(R.id.textViewProductDescription);
+            price = itemView.findViewById(R.id.textViewProductPrice);
+            quantity = itemView.findViewById(R.id.textViewProductQuantity);
+            image = itemView.findViewById(R.id.imageViewProductImage);
+            increaseQuantityButton = itemView.findViewById(R.id.increaseQuantityButton);
+            decreaseQuantityButton = itemView.findViewById(R.id.decreaseQuantityButton);
+            remove = itemView.findViewById(R.id.remove);
+            addButton = itemView.findViewById(R.id.add);
+        }
+    }
     private void updateCartItem(myCart item) {
         String userId = mAuth.getCurrentUser().getUid();
         DocumentReference cartItemRef = db.collection("Users")
@@ -152,26 +207,34 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
 
 
-    @Override
-    public int getItemCount() {
-        return list.size();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, desc, price, quantity;
-        ImageView image;
-        Button increaseQuantityButton, decreaseQuantityButton, remove;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            name = itemView.findViewById(R.id.textViewProductName);
-            desc = itemView.findViewById(R.id.textViewProductDescription);
-            price = itemView.findViewById(R.id.textViewProductPrice);
-            quantity = itemView.findViewById(R.id.textViewProductQuantity);
-            image = itemView.findViewById(R.id.imageViewProductImage);
-            increaseQuantityButton = itemView.findViewById(R.id.increaseQuantityButton);
-            decreaseQuantityButton = itemView.findViewById(R.id.decreaseQuantityButton);
-            remove = itemView.findViewById(R.id.remove);
+//    @Override
+//    public int getItemCount() {
+//        return list.size();
+//    }
+//
+//    public class ViewHolder extends RecyclerView.ViewHolder {
+//        public View addButton;
+//        TextView name, desc, price, quantity;
+//        ImageView image;
+//        Button increaseQuantityButton, decreaseQuantityButton, remove;
+//
+//        public ViewHolder(@NonNull View itemView) {
+//            super(itemView);
+//            name = itemView.findViewById(R.id.textViewProductName);
+//            desc = itemView.findViewById(R.id.textViewProductDescription);
+//            price = itemView.findViewById(R.id.textViewProductPrice);
+//            quantity = itemView.findViewById(R.id.textViewProductQuantity);
+//            image = itemView.findViewById(R.id.imageViewProductImage);
+//            increaseQuantityButton = itemView.findViewById(R.id.increaseQuantityButton);
+//            decreaseQuantityButton = itemView.findViewById(R.id.decreaseQuantityButton);
+//            remove = itemView.findViewById(R.id.remove);
+//
+//
+//                addButton = itemView.findViewById(R.id.add);
+//            }
+        private void showMessage(String message) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
-    }
-}
+
+        }
+

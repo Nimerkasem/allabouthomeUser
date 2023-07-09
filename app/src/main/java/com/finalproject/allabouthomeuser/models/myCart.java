@@ -11,9 +11,7 @@ public class myCart extends Lamp {
         super();
     }
 
-    public myCart(double watt, String name) {
-        super(watt, name);
-    }
+
 
 
 //    public long getQuantityAsLong() {

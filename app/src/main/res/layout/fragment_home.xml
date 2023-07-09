@@ -7,10 +7,14 @@
 
     <Button
         android:id="@+id/btnShowProducts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="291dp"
+        android:layout_height="118dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="60dp"
+        android:background="@drawable/buttons"
         android:text="Show  all Products"
-        android:layout_margin="16dp" />
+        android:textSize="20dp"
+        android:textColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRecyclerView"
@@ -24,11 +28,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
         <Button
             android:id="@+id/btnLightCalc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_width="291dp"
+            android:layout_height="118dp"
+            android:layout_marginTop="300dp"
+            android:layout_marginLeft="60dp"
+            android:background="@drawable/buttons"
+            android:textColor="@color/white"
             android:onClick="openLightCalcFragment"
             android:text="Light Calc" />
 

@@ -14,6 +14,7 @@ public class Item {
 
     public Item(String name){
         this.name=name;
+
     }
 
     public Item(String uid,String adminuid,String name, String description, int price, String adminName, int quantity, String image) {

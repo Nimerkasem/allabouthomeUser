@@ -1,5 +1,6 @@
 package com.finalproject.allabouthomeuser.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,22 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class lampFragment extends Fragment {
-
     private RecyclerView lampRecyclerView;
     private LampAdapter lampAdapter;
     private List<Lamp> lampList;
     private FirebaseFirestore db;
-    private List<Lamp> selectedLamps;
+
 
     public lampFragment() {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_lamp, container, false);
-        selectedLamps = new ArrayList<>();
+
 
         lampRecyclerView = view.findViewById(R.id.lampRecyclerView);
         lampList = new ArrayList<>();
@@ -50,16 +51,7 @@ public class lampFragment extends Fragment {
 
         getAllLamps();
 
-        lampAdapter.setOnAddButtonClickListener(new LampAdapter.OnAddButtonClickListener() {
-            @Override
-            public void onAddButtonClick(Lamp lamp) {
-                selectedLamps.add(lamp);
-                showMessage("Lamp added successfully");
-            }
-        });
 
-        LightCalcFragment lightCalcFragment = new LightCalcFragment();
-        lightCalcFragment.setLampList(selectedLamps);
 
 
         return view;
@@ -83,6 +75,7 @@ public class lampFragment extends Fragment {
                     String imageURL = document.getString("imageURL");
 
                     Lamp lamp = new Lamp(itemUid,adminuid, name, description, price, adminName, quantity, imageURL, shade, watt);
+
                     lampList.add(lamp);
                 }
                 lampAdapter.notifyDataSetChanged();
@@ -91,8 +84,6 @@ public class lampFragment extends Fragment {
             }
         });
     }
-    private void showMessage(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-    }
+
 
 }

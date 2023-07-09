@@ -100,8 +100,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         DocumentReference cartItemRef = db.collection("Users")
                 .document(userId)
                 .collection("cart")
-                .document(product.getUid()); // Use itemUid as the document ID
-
+                .document(product.getUid());
         cartItemRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -148,7 +147,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            // Update existing admin cart
                             Map<String, Object> adminCartData = document.getData();
                             if (adminCartData != null) {
                                 HashMap<String, Integer> adminCart = new HashMap<>();

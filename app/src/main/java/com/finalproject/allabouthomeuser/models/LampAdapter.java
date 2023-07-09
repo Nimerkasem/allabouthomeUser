@@ -57,30 +57,6 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
 
         Glide.with(holder.itemView.getContext()).load(lamp.getImage()).into(holder.imgLamp);
 
-        holder.btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (addButtonClickListener != null) {
-                    addButtonClickListener.onAddButtonClick(lamp);
-                }
-            }
-        });
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                notifyItemChanged(selectedPosition);
-                selectedPosition = holder.getAdapterPosition();
-                notifyItemChanged(selectedPosition);
-            }
-        });
-
-        // Highlight the selected item
-        if (selectedPosition == position) {
-            holder.itemView.setBackgroundResource(R.drawable.background);
-        } else {
-            holder.itemView.setBackgroundResource(0);
-        }
     }
 
     @Override
@@ -105,11 +81,9 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
             txtWatt = itemView.findViewById(R.id.lampWatt);
             txtShade = itemView.findViewById(R.id.lampShade);
             imgLamp = itemView.findViewById(R.id.lampImage);
-            btnAdd = itemView.findViewById(R.id.add);
+
         }
     }
 
-    public int getSelectedPosition() {
-        return selectedPosition;
-    }
+
 }

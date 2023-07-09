@@ -131,22 +131,24 @@ public class room {
 
         return  (int) (Ledwatt(room)/lamp.getWatt()+1);
     }
-    public static boolean Suitablelamps(room room, List<Lamp> lamp) {
-        if (lamp == null) {
-            return false;
+    public static boolean Suitablelamps(room room, List<Lamp> lamps) {
+        if (lamps.isEmpty()) {
+            return false; }
+
+        double totalWattage = 0;
+
+        for (Lamp lamp : lamps) {
+            totalWattage += lamp.getWatt();
+
+            if ( lamp.getShade() != getShade(room)) {
+                return false;
+            }
         }
 
-        double lampswatt = 0;
-        if (lamp.size() > 1) {
-            for (int i = 0; i < lamp.size(); i++) {
-                lampswatt += lamp.get(i).getWatt();
-            }
-            if (Ledwatt(room) >= lampswatt) {
-                return true;
-            }
-        }
-        return false;
+        return totalWattage >= Ledwatt(room);
     }
+
+
 
     public static int getShade(room room) {
         String kind = room.getKind();
