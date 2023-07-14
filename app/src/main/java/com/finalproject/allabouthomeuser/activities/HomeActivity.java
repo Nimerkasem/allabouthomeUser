@@ -11,10 +11,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.finalproject.allabouthomeuser.databinding.ActivityHomeBinding;
 import com.finalproject.allabouthomeuser.fragments.MyCartFragment;
 import com.finalproject.allabouthomeuser.fragments.ProfileFragment;
 import com.finalproject.allabouthomeuser.R;
-import com.finalproject.allabouthomeuser.databinding.ActivityHomeBinding;
 import com.finalproject.allabouthomeuser.fragments.homeFragment;
 
 public class HomeActivity extends AppCompatActivity {

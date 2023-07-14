@@ -15,12 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.finalproject.allabouthomeuser.R;
+import com.finalproject.allabouthomeuser.fragments.MyCartFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -32,12 +37,15 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     private List<myCart> list;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private MyCartFragment fragment;
 
-    public MyCartAdapter(Context context, List<myCart> list) {
+    public MyCartAdapter(Context context, List<myCart> list, MyCartFragment fragment) {
         this.context = context;
         this.list = list;
         mAuth = FirebaseAuth.getInstance();
+        this.fragment = fragment;
     }
+
 
     @NonNull
     @Override
@@ -47,25 +55,74 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyCartAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         myCart item = list.get(position);
         holder.name.setText(item.getName());
-        holder.price.setText(String.valueOf(item.getPrice()));
+        holder.price.setText((item.getPrice())+"₪");
         holder.quantity.setText(String.valueOf(item.getQuantity()));
-        holder.desc.setText(item.getDescription());
         mAuth = FirebaseAuth.getInstance();
         Glide.with(context).load(item.getImage()).into(holder.image);
 
         holder.increaseQuantityButton.setOnClickListener(v -> {
-            int quantity = Integer.parseInt(holder.quantity.getText().toString());
-            quantity++;
-            holder.quantity.setText(String.valueOf(quantity));
-            item.setQuantity(quantity);
+            String itemUid = item.getUid();
 
-            updateCartItem(item);
+            // Check in alllamps collection
+            db.collection("alllamps").document(itemUid).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        int maxQuantity = document.getLong("quantity").intValue();
+                        int quantity = Integer.parseInt(holder.quantity.getText().toString());
+
+                        if (quantity <= maxQuantity) {
+                            quantity++;
+                            holder.quantity.setText(String.valueOf(quantity));
+                            item.setQuantity(quantity);
+
+                            updateCartItem(item);
+                            fragment.updateTotalPrice();
+                        } else {
+                            // Quantity limit reached
+                            // Show a message or perform any desired action
+                        }
+                    } else {
+                        // Check in allproducts collection
+                        db.collection("allproducts").document(itemUid).get().addOnCompleteListener(secondTask -> {
+                            if (secondTask.isSuccessful()) {
+                                DocumentSnapshot secondDocument = secondTask.getResult();
+                                if (secondDocument.exists()) {
+                                    int maxQuantity = secondDocument.getLong("quantity").intValue();
+                                    int quantity = Integer.parseInt(holder.quantity.getText().toString());
+
+                                    if (quantity <= maxQuantity) {
+                                        quantity++;
+                                        holder.quantity.setText(String.valueOf(quantity));
+                                        item.setQuantity(quantity);
+
+                                        updateCartItem(item);
+                                        fragment.updateTotalPrice();
+                                    } else {
+                                        // Quantity limit reached
+                                        // Show a message or perform any desired action
+                                    }
+                                } else {
+                                    // Item not found in either collection
+                                    // Handle the case where the item doesn't exist
+                                }
+                            } else {
+                                // Handle failure
+                            }
+                        });
+                    }
+                } else {
+                    // Handle failure
+                }
+            });
         });
 
+
         holder.decreaseQuantityButton.setOnClickListener(v -> {
+
             int quantity = Integer.parseInt(holder.quantity.getText().toString());
             if (quantity > 1) {
                 quantity--;
@@ -73,14 +130,18 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                 item.setQuantity(quantity);
 
                 updateCartItem(item);
+                fragment.updateTotalPrice();
             }
         });
+
+
 
         holder.remove.setOnClickListener(v -> {
             list.remove(position);
             notifyDataSetChanged();
 
             removeCartItem(item);
+            fragment.updateTotalPrice();
         });
 
         holder.addButton.setOnClickListener(v -> {
@@ -94,24 +155,28 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                         .get()
                         .addOnSuccessListener(documentSnapshot -> {
                             if (documentSnapshot.exists()) {
-                                String lampName = documentSnapshot.getString("name");
-                                double wattage = documentSnapshot.getDouble("watt");
-                                int shade = documentSnapshot.getLong("shade").intValue();
+                                try {
+                                    String lampName = documentSnapshot.getString("name");
+                                    double wattage = documentSnapshot.getDouble("watt");
+                                    int shade = documentSnapshot.getLong("shade").intValue();
 
-                                Map<String, Object> lampData = new HashMap<>();
-                                lampData.put("uid", lampUid);
-                                lampData.put("name", lampName);
-                                lampData.put("wattage", wattage);
-                                lampData.put("shade", shade);
+                                    Map<String, Object> lampData = new HashMap<>();
+                                    lampData.put("uid", lampUid);
+                                    lampData.put("name", lampName);
+                                    lampData.put("wattage", wattage);
+                                    lampData.put("shade", shade);
 
-                                db.collection("Users").document(userId).collection("roomlamps")
-                                        .add(lampData)
-                                        .addOnSuccessListener(documentReference -> {
-                                            showMessage("Lamp added to roomlamps.");
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            showMessage("Failed to add lamp to roomlamps: " + e.getMessage());
-                                        });
+                                    db.collection("Users").document(userId).collection("roomlamps")
+                                            .add(lampData)
+                                            .addOnSuccessListener(documentReference -> {
+                                                showMessage("Lamp added to roomlamps.");
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                showMessage("Failed to add lamp to roomlamps: " + e.getMessage());
+                                            });
+                                } catch (Exception e) {
+                                    showMessage("Error processing lamp details: " + e.getMessage());
+                                }
                             } else {
                                 showMessage("Lamp not found in the user's cart.");
                             }
@@ -123,21 +188,24 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                 showMessage("Selected item is not a lamp.");
             }
         });
+
     }
-        @Override
+
+
+
+    @Override
     public int getItemCount() {
         return list.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, desc, price, quantity;
+        TextView name, price, quantity;
         ImageView image;
         Button increaseQuantityButton, decreaseQuantityButton, remove, addButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.textViewProductName);
-            desc = itemView.findViewById(R.id.textViewProductDescription);
             price = itemView.findViewById(R.id.textViewProductPrice);
             quantity = itemView.findViewById(R.id.textViewProductQuantity);
             image = itemView.findViewById(R.id.imageViewProductImage);
@@ -164,7 +232,6 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                             int price = item.getPrice();
                             int quantityDiff = newQuantity - originalQuantity;
                             int totalDiff = price * quantityDiff;
-
                             cartItemRef.update("quantity", item.getQuantity())
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d(TAG, "Cart item quantity successfully updated!");
@@ -207,31 +274,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
 
 
-//    @Override
-//    public int getItemCount() {
-//        return list.size();
-//    }
-//
-//    public class ViewHolder extends RecyclerView.ViewHolder {
-//        public View addButton;
-//        TextView name, desc, price, quantity;
-//        ImageView image;
-//        Button increaseQuantityButton, decreaseQuantityButton, remove;
-//
-//        public ViewHolder(@NonNull View itemView) {
-//            super(itemView);
-//            name = itemView.findViewById(R.id.textViewProductName);
-//            desc = itemView.findViewById(R.id.textViewProductDescription);
-//            price = itemView.findViewById(R.id.textViewProductPrice);
-//            quantity = itemView.findViewById(R.id.textViewProductQuantity);
-//            image = itemView.findViewById(R.id.imageViewProductImage);
-//            increaseQuantityButton = itemView.findViewById(R.id.increaseQuantityButton);
-//            decreaseQuantityButton = itemView.findViewById(R.id.decreaseQuantityButton);
-//            remove = itemView.findViewById(R.id.remove);
-//
-//
-//                addButton = itemView.findViewById(R.id.add);
-//            }
+
         private void showMessage(String message) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }

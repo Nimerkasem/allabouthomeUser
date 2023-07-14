@@ -89,6 +89,11 @@ public class LightCalcFragment extends Fragment {
 
 
     private void calculateLedWatt() {
+        if (etLength.getText().toString().isEmpty() || etWidth.getText().toString().isEmpty() || getheight.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         double length = Double.parseDouble(etLength.getText().toString());
         double width = Double.parseDouble(etWidth.getText().toString());
         double Height =Double.parseDouble(getheight.getText().toString());
@@ -103,6 +108,11 @@ public class LightCalcFragment extends Fragment {
 
 
     private void matching() {
+        if (etLength.getText().toString().isEmpty() || etWidth.getText().toString().isEmpty() || getheight.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         double length = Double.parseDouble(etLength.getText().toString());
         double width = Double.parseDouble(etWidth.getText().toString());
         double height = Double.parseDouble(getheight.getText().toString());
@@ -169,7 +179,7 @@ public class LightCalcFragment extends Fragment {
 
         String shadeMessage = "Shade: " + shade+"k";
         String AngleMassage ="Angle: " + Angle+"°";
-        tvLedWatt.setText(String.valueOf(ledWatt));
+        tvLedWatt.setText("Watt: "+String.valueOf(ledWatt)+" LED Watt");
         tvShade.setText(shadeMessage);
         tvAngle.setText(AngleMassage);
         setheight.setText(massege);

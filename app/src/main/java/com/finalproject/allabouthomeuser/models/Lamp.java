@@ -1,13 +1,13 @@
 package com.finalproject.allabouthomeuser.models;
 
-import android.graphics.Bitmap;
+
 
 public class Lamp extends Item {
     private double watt;
     private int shade; // 4000, 3000, 6000
-    private String type; // שולחן שקוע צמוד תלוי
 
-    public Lamp(String uid,String adminuid, String name, String description, int price, String adminName, int quantity, String image, double watt, int shade) {
+
+   public Lamp(String uid,String adminuid, String name, String description, int price, String adminName, int quantity, String image, double watt, int shade) {
         super(uid,adminuid, name, description, price, adminName, quantity, image);
         this.watt = watt;
         this.shade = shade;
@@ -16,7 +16,8 @@ public class Lamp extends Item {
     public Lamp() {
     }
 
-    public Lamp(double watt, String name,double shade) {
+
+    public Lamp(double watt, String name, double shade) {
         super(name );
         this.watt=watt;
         this.shade= (int) shade;
@@ -26,23 +27,11 @@ public class Lamp extends Item {
         return watt;
     }
 
-    public void setWatt(double watt) {
-        this.watt = watt;
-    }
+
 
     public int getShade() {
         return shade;
     }
 
-    public void setShade(int shade) {
-        this.shade = shade;
-    }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

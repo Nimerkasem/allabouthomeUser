@@ -34,13 +34,12 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private CollectionReference allProductsRef = db.collection("allproducts");
-    private CollectionReference allLampsRef = db.collection("alllamps");
     private List<Item> itemList;
     private RecyclerView itemRecyclerView;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private ItemAdapter itemAdapter;
     private Button btnLightCalc;
-    private Button btnShowProducts;
+    private Button btnShowProducts , allproduct ;
+    private Button btnLampFragment ;
 
     private boolean isProductListVisible = false;
 
@@ -53,18 +52,20 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         itemAdapter = new ItemAdapter(getActivity(), itemList);
         itemRecyclerView.setAdapter(itemAdapter);
-
+        allproduct=view.findViewById(R.id.allproduct);
+        allproduct = view.findViewById(R.id.allproduct);
+        allproduct.setOnClickListener(this);
         btnLightCalc = view.findViewById(R.id.btnLightCalc);
         btnShowProducts = view.findViewById(R.id.btnShowProducts);
 
         btnLightCalc.setOnClickListener(this);
         btnShowProducts.setOnClickListener(this);
+        btnLampFragment = view.findViewById(R.id.lampfr);
+        btnLampFragment.setOnClickListener(this);
 
-        // Initially, hide the product list
         hideProductList();
 
         getAllProducts();
-        getAllLamps();
 
         return view;
     }
@@ -77,12 +78,33 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         } else if (v == btnShowProducts) {
             toggleProductListVisibility();
             hideButtons();
+        } else if (v == btnLampFragment) {
+            openLampFragment();
+            hideButtons();
         }
+     else if (v == allproduct) {
+        opencatigotiesfragment();
+        hideButtons();
+    }
     }
 
+    private void opencatigotiesfragment() {
+        hideProductViews();
+        Fragment all = new all();
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentContainer, all);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+
+
     private void hideButtons() {
+        allproduct.setVisibility(View.GONE);
         btnLightCalc.setVisibility(View.GONE);
         btnShowProducts.setVisibility(View.GONE);
+        btnLampFragment.setVisibility(View.GONE);
     }
 
     private void toggleProductListVisibility() {
@@ -102,6 +124,17 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         itemRecyclerView.setVisibility(View.VISIBLE);
         isProductListVisible = true;
     }
+    private void openLampFragment() {
+        hideProductViews();
+
+        Fragment lampFragment = new lampFragment();
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentContainer, lampFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
 
     public void openLightCalcFragment() {
         hideProductViews();
@@ -119,6 +152,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         btnShowProducts.setVisibility(View.GONE);
     }
 
+
     private void getAllProducts() {
         allProductsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -127,7 +161,6 @@ public class homeFragment extends Fragment implements View.OnClickListener {
                     int quantity = document.getLong("quantity").intValue();
                     if (quantity > 0) {
 
-                        // Retrieve the data for each product
                         String name = document.getString("name");
                         String description = document.getString("description");
                         int price = document.getLong("price").intValue();
@@ -164,41 +197,6 @@ public class homeFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    // Function to get all lamps
-    private void getAllLamps() {
-        allLampsRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    String itemUid = document.getId();
-                    int quantity = document.getLong("quantity").intValue();
-                    if (quantity > 0) {
-                        // Retrieve the data for each lamp
-                        String name = document.getString("name");
-                        String description = document.getString("description");
-                        int price = document.getLong("price").intValue();
-                        String adminName = document.getString("adminName");
-                        String adminuid = document.getString("adminUID");
-                        int shade = Math.toIntExact(document.getLong("shade"));
-                        double watt = document.getLong("wattage").intValue();
-
-
-                        String imageURL = document.getString("imageURL");
-
-
-                        Item item = new Lamp(itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
-
-
-                        itemList.add(item);
-
-
-                        itemAdapter.notifyDataSetChanged();
-                    }
-                }
-            } else {
-
-            }
-        });
-    }
 
 
 }

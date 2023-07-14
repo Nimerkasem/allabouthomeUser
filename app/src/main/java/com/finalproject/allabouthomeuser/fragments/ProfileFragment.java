@@ -45,8 +45,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private Users user;
     private String userId;
     private ImageView profile;
-    private TextView birthday;
-    private EditText username, email, phone;
+    private TextView email, birthday;
+    private EditText username,  phone;
     private Uri imageUri;
 
     @Override
@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             view.findViewById(R.id.save).setOnClickListener(this);
             view.findViewById(R.id.editPass).setOnClickListener(this);
-            view.findViewById(R.id.delete).setOnClickListener(this);
+
 
             DocumentReference userRef = db.collection("Users").document(userId);
             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -108,8 +108,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         } else if (v.getId() == R.id.editPass) {
             startActivity(new Intent(getActivity(), EditPassFActivity.class));
 
-        } else if (v.getId() == R.id.delete) {
-            // Handle delete button click
+
         } else if (v.getId() == R.id.profileImg) {
             openImageChooser();
         }
@@ -129,20 +128,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             user.setPassword(existingPassword);
 
             if (imageUri != null) {
-                // Upload the new image to Firebase Storage
                 StorageReference imageRef = storageRef.child("user_images/" + userId);
                 imageRef.putFile(imageUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                // Get the download URL of the uploaded image
                                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        // Update the user's profile image URL in the Firestore document
                                         user.setProfilePicUrl(uri.toString());
 
-                                        // Update the Firestore document with the updated user object
                                         updateUserProfile(user);
                                     }
                                 });
@@ -155,14 +150,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                             }
                         });
             } else {
-                // No image selected, update the Firestore document with the updated user object
                 updateUserProfile(user);
             }
         }
     }
 
     private void updateUserProfile(Users updatedUser) {
-        // Update the Firestore document with the updated user object
         db.collection("Users").document(userId)
                 .set(updatedUser)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/input_design"
+    android:background="@drawable/input_white"
     android:layout_margin="15dp"
     android:padding="8dp">
 
@@ -10,7 +10,7 @@
         android:id="@+id/lampName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         android:layout_marginStart="8dp"
         android:textSize="20dp"
         android:layout_marginTop="15dp"
@@ -34,7 +34,7 @@
         android:layout_below="@id/lampName"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="5dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="lamp Description" />
 
     <TextView
@@ -44,7 +44,7 @@
         android:layout_below="@id/lampDescription"
         android:layout_toEndOf="@+id/lampImage"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="lamp Price" />
 
     <TextView
@@ -54,27 +54,18 @@
         android:layout_below="@id/lampPrice"
         android:layout_toEndOf="@+id/lampImage"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="Admin Name" />
 
-    <TextView
-        android:id="@+id/lampQuantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lampAdmin"
-        android:layout_toEndOf="@+id/lampImage"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
-        tools:text="lamp Quantity" />
 
     <TextView
         android:id="@+id/lampWatt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lampQuantity"
+        android:layout_below="@id/lampAdmin"
         android:layout_toEndOf="@+id/lampImage"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="lamp watt" />
 
     <TextView
@@ -84,18 +75,19 @@
         android:layout_below="@id/lampWatt"
         android:layout_toEndOf="@+id/lampImage"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="lamp Shade" />
 
     <Button
         android:id="@+id/add"
         android:layout_width="100dp"
         android:layout_height="70dp"
-        android:background="@drawable/buttons"
+        android:background="@drawable/btnwhite"
         android:text="add"
-        android:textColor="@color/white"
+        android:textColor="@color/purple_700"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="50dp"
+        android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/lampImage"
         android:padding="5dp"
         android:layout_below="@id/lampShade" />

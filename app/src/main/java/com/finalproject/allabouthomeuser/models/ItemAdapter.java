@@ -29,7 +29,7 @@ import java.util.Map;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
     private List<Item> itemList;
     private FirebaseAuth mAuth;
-    private Context context; // Add context field
+    private Context context;
 
     public ItemAdapter(Context context, List<Item> itemList) {
         this.context = context;
@@ -48,14 +48,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Item item = itemList.get(position);
 
-        // Use Glide to load the image from the URL
         Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.itemImage);
 
         holder.itemName.setText(item.getName());
         holder.itemDescription.setText(item.getDescription());
-        holder.itemPrice.setText(String.valueOf(item.getPrice()));
+        holder.itemPrice.setText(String.valueOf(item.getPrice())+"₪");
         holder.itemAdmin.setText(item.getAdminName());
-        holder.itemQuantity.setText(String.valueOf(item.getQuantity()));
 
 
         holder.addToCart.setOnClickListener(new View.OnClickListener() {
@@ -73,13 +71,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return itemList.size();
     }
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         ImageView itemImage;
         TextView itemName;
         TextView itemDescription;
         TextView itemPrice;
         TextView itemAdmin;
-        TextView itemQuantity;
         Button addToCart;
 
         public ItemViewHolder(@NonNull View itemView) {
@@ -89,9 +86,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             itemDescription = itemView.findViewById(R.id.itemDescription);
             itemPrice = itemView.findViewById(R.id.itemPrice);
             itemAdmin = itemView.findViewById(R.id.itemAdmin);
-            itemQuantity = itemView.findViewById(R.id.itemQuantity);
             addToCart = itemView.findViewById(R.id.addtocart);
         }
+
+
     }
 
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -107,18 +105,31 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 if (document.exists()) {
                     int quantity = document.getLong("quantity").intValue();
 
-                    int newQuantity = quantity + 1;
-                    cartItemRef.update("quantity", newQuantity)
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                updateAdminCart(userId, product.getAdminuid(), product.getPrice());
-                                showToast("Item added to cart successfully");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.w(TAG, "Error updating document", e);
-                            });
-                } else {
+                    db.collection("allproducts").document(product.getUid()).get().addOnCompleteListener(secondTask -> {
+                        if (secondTask.isSuccessful()) {
+                            DocumentSnapshot secondDocument = secondTask.getResult();
+                            if (secondDocument.exists()) {
+                                int maxQuantity = secondDocument.getLong("quantity").intValue();
 
+                                if (quantity <= maxQuantity) {
+                                    int newQuantity = quantity + 1;
+                                    cartItemRef.update("quantity", newQuantity)
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                updateAdminCart(userId, product.getAdminuid(), product.getPrice());
+                                                showToast("Item added to cart successfully");
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.w(TAG, "Error updating document", e);
+                                            });
+                                } else {
+                                    // Quantity limit reached
+                                    // Show a message or perform any desired action
+                                }
+                            }
+                        }
+                    });
+                } else {
                     product.setQuantity(1);
                     cartItemRef.set(product)
                             .addOnSuccessListener(aVoid -> {
@@ -135,7 +146,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             }
         });
     }
-
 
 
     public static void updateAdminCart(String userId, String adminId, int totalPrice) {
@@ -161,7 +171,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                 }
 
                                 if (adminCart.containsKey(adminId)) {
-                                    // Update total price
                                     int existingPrice = adminCart.get(adminId);
                                     int totalPriceInt = totalPrice;
                                     int newPrice = existingPrice + totalPriceInt;
@@ -180,7 +189,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                         });
                             }
                         } else {
-                            // Create new admin cart
                             HashMap<String, Integer> adminCart = new HashMap<>();
                             adminCart.put(adminId, totalPrice);
 

@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,7 +55,7 @@ public class MyCartFragment extends Fragment {
         recyclerView = view.findViewById(R.id.cart_items_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         cartList = new ArrayList<>();
-        cartAdapter = new MyCartAdapter(getContext(), cartList);
+        cartAdapter = new MyCartAdapter(getContext(), cartList,this);
         recyclerView.setAdapter(cartAdapter);
         buy = view.findViewById(R.id.buy_now);
         tvTotalPrice = view.findViewById(R.id.total_price_text_view);
@@ -294,16 +296,24 @@ public class MyCartFragment extends Fragment {
             double itemQuantity = item.getQuantity();
             totalPrice += (itemPrice * itemQuantity);
         }
+
         return totalPrice;
     }
 
     private void displayTotalPrice(double totalPrice) {
-        String totalPriceText = "Total Price: $" + totalPrice;
+        String totalPriceText = "Total Price: ₪" + totalPrice;
         tvTotalPrice.setText(totalPriceText);
     }
+
+    public void updateTotalPrice() {
+        double totalPrice = calculateTotalPrice(cartList);
+        displayTotalPrice(totalPrice);
+    }
+
 
 
     private void showMessage(String message) {
        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
+
 }

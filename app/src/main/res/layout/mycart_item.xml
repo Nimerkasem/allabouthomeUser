@@ -27,58 +27,41 @@
             android:text="@string/project_id"
             android:layout_toEndOf="@id/imageViewProductImage"
             android:textSize="16sp"
+            android:textColor="@color/purple_700"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textViewProductDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="description"
-            android:layout_below="@id/textViewProductName"
-            android:layout_toEndOf="@id/imageViewProductImage"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp" />
+
 
         <TextView
             android:id="@+id/textViewProductPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="price"
-            android:layout_below="@id/textViewProductDescription"
+            android:layout_below="@id/textViewProductName"
             android:layout_toEndOf="@id/imageViewProductImage"
             android:layout_marginTop="8dp"
+            android:textColor="@color/purple_700"
             android:textSize="14sp" />
-
         <TextView
-            android:id="@+id/textViewLampWatt"
+            android:id="@+id/tv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Watt"
-            android:layout_marginLeft="50dp"
-            android:layout_below="@id/textViewProductDescription"
-            android:layout_toEndOf="@id/textViewProductPrice"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/textViewLampShade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Shade"
-            android:layout_marginLeft="50dp"
-            android:layout_below="@id/textViewProductDescription"
-            android:layout_toEndOf="@id/textViewLampWatt"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/textViewProductQuantity"
-            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/imageViewProductImage"
             android:layout_below="@id/textViewProductPrice"
             android:layout_marginTop="8dp"
             android:textSize="14sp"
+            android:textColor="@color/purple_700"
+            android:text="Quantity:" />
+
+        <TextView
+            android:id="@+id/textViewProductQuantity"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/tv"
+            android:layout_below="@id/textViewProductPrice"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/purple_700"
             android:text="Quantity" />
 
         <Button
@@ -87,6 +70,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textViewProductQuantity"
             android:layout_marginTop="8dp"
+            android:background="@drawable/btnwhite"
+            android:textColor="@color/purple_700"
             android:layout_toEndOf="@id/imageViewProductImage"
             android:text="+" />
 
@@ -98,7 +83,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginLeft="10dp"
             android:layout_toEndOf="@id/increaseQuantityButton"
-            android:text="-" />
+            android:text="-"
+            android:background="@drawable/btnwhite"/>
 
         <Button
             android:id="@+id/remove"
@@ -110,16 +96,21 @@
             android:layout_marginLeft="60dp"
             android:layout_marginTop="33dp"
             android:layout_marginEnd="8dp"
+            android:textColor="@color/white"
+            android:background="@drawable/buttons"
             android:layout_toEndOf="@id/decreaseQuantityButton"
             android:text="Remove" />
+
+
         <Button
             android:id="@+id/add"
             android:layout_width="59dp"
             android:layout_height="wrap_content"
-
             android:layout_marginTop="8dp"
-
-            android:text="add" />
+            android:layout_marginLeft="300dp"
+            android:background="@drawable/buttons"
+            android:text="add"
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 

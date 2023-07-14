@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/input_design"
+    android:background="@drawable/input_white"
     android:layout_margin="15dp"
     android:padding="8dp">
 
@@ -11,7 +11,7 @@
         android:id="@+id/itemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         android:layout_marginStart="8dp"
         android:textSize="20dp"
         android:layout_marginTop="15dp"
@@ -36,7 +36,7 @@
         android:layout_below="@id/itemName"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="5dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="Item Description" />
 
     <TextView
@@ -45,9 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/itemDescription"
         android:layout_toEndOf="@+id/itemImage"
-
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         tools:text="Item Price" />
 
     <TextView
@@ -56,26 +55,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/itemPrice"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         android:layout_toEndOf="@+id/itemImage"
         tools:text="Admin Name" />
 
-    <TextView
-        android:id="@+id/itemQuantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/itemAdmin"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
-        android:layout_toEndOf="@+id/itemImage"
-        tools:text="Item Quantity" />
+    
     <TextView
         android:id="@+id/itemWatt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/itemQuantity"
+        android:layout_below="@id/itemAdmin"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         android:layout_toEndOf="@+id/itemImage"
         tools:text="Item watt" />
     <TextView
@@ -84,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/itemAdmin"
         android:layout_marginStart="8dp"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/input"
         android:layout_toEndOf="@+id/itemImage"
         tools:text="Item Shade" />
 
@@ -92,9 +83,10 @@
         android:id="@+id/addtocart"
         android:layout_width="100dp"
         android:layout_height="70dp"
-        android:background="@drawable/buttons"
+        android:background="@drawable/btnwhite"
         android:text="Add To Cart"
-        android:textColor="@color/white"
+        android:textColor="@color/purple_700"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="50dp"
         android:layout_toEndOf="@+id/itemImage"

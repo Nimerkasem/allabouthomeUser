@@ -2,24 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/purpleback"
     tools:context=".fragments.homeFragment">
 
-
-    <Button
-        android:id="@+id/btnShowProducts"
-        android:layout_width="291dp"
-        android:layout_height="118dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="60dp"
-        android:background="@drawable/buttons"
-        android:text="Show  all Products"
-        android:textSize="20dp"
-        android:textColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="70dp"
+
         android:layout_marginTop="50dp"
         tools:listitem="@layout/item_layout" />
 
@@ -28,18 +20,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/allproduct"
+            android:layout_width="291dp"
+            android:layout_height="118dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="60dp"
+            android:text="ALL ABOUT HOME"
+            android:background="@drawable/btnwhite"
+            android:textSize="20dp"
+            android:textColor="@color/purple_500" />
+        <Button
+            android:id="@+id/btnShowProducts"
+            android:layout_width="291dp"
+            android:layout_height="118dp"
+            android:layout_marginTop="250dp"
+            android:layout_marginLeft="60dp"
+            android:background="@drawable/btnwhite"
+            android:textColor="@color/purple_500"
+            android:text="ALL ABOUT FURNITURE"
+            android:textSize="20dp"/>
 
+        <Button
+            android:id="@+id/lampfr"
+            android:layout_width="291dp"
+            android:layout_height="118dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="400dp"
+            android:textSize="20dp"
+            android:background="@drawable/btnwhite"
+            android:textColor="@color/purple_500"            android:onClick="openLightCalcFragment"
+            android:text="ALL ABOUT LIGHT"  />
 
         <Button
             android:id="@+id/btnLightCalc"
             android:layout_width="291dp"
             android:layout_height="118dp"
-            android:layout_marginTop="300dp"
+            android:layout_marginTop="550dp"
+            android:textSize="20dp"
             android:layout_marginLeft="60dp"
-            android:background="@drawable/buttons"
-            android:textColor="@color/white"
-            android:onClick="openLightCalcFragment"
-            android:text="Light Calc" />
+            android:background="@drawable/btnwhite"
+            android:textColor="@color/purple_500"
+            android:text="Need help with
+             Lighting?" />
+
+
+
 
     </FrameLayout>
 

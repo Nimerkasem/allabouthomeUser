@@ -1,6 +1,7 @@
 package com.finalproject.allabouthomeuser.activities;
 
 import static com.google.android.material.internal.ContextUtils.getActivity;
+import static com.google.common.net.HostSpecifier.isValid;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -101,23 +102,23 @@ public class EditPassFActivity extends AppCompatActivity {
     }
 
 
-    public static boolean isValid(String pass) {
-        int f1 = 0, f2 = 0, f3 = 0;
-        if (pass.length() < 8) {
-            return false;
-        } else {
-            for (int i = 0; i < pass.length(); i++) {
-                if (Character.isLetter(pass.charAt(i))) f1++;
-                else if (Character.isDigit(pass.charAt(i))) f2++;
-                else {
-                    char c = pass.charAt(i);
-                    if (c >= 33 && c <= 46 || c == 64) f3 = 1;
-                }
-            }
-            if (f1 >= 8 && f2 >= 1 && f3 >= 1)
-                return true;
-            return false;
-        }
-    }
+//    public static boolean isValid(String pass) {
+//        int f1 = 0, f2 = 0, f3 = 0;
+//        if (pass.length() < 8) {
+//            return false;
+//        } else {
+//            for (int i = 0; i < pass.length(); i++) {
+//                if (Character.isLetter(pass.charAt(i))) f1++;
+//                else if (Character.isDigit(pass.charAt(i))) f2++;
+//                else {
+//                    char c = pass.charAt(i);
+//                    if (c >= 33 && c <= 46 || c == 64) f3 = 1;
+//                }
+//            }
+//            if (f1 >= 8 && f2 >= 1 && f3 >= 1)
+//                return true;
+//            return false;
+//        }
+//    }
 }
 

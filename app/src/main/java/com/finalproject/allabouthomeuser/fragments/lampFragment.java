@@ -70,11 +70,11 @@ public class lampFragment extends Fragment {
                     int price = document.getLong("price").intValue();
                     String adminName = document.getString("adminName");
                     String adminuid = document.getString("adminUID");
-                    double shade = document.getDouble("shade");
-                    int watt = document.getLong("wattage").intValue();
+                    int shade = Math.toIntExact(document.getLong("shade"));
+                    double watt = document.getLong("wattage").intValue();
                     String imageURL = document.getString("imageURL");
 
-                    Lamp lamp = new Lamp(itemUid,adminuid, name, description, price, adminName, quantity, imageURL, shade, watt);
+                    Lamp lamp = new Lamp(itemUid,adminuid, name, description, price, adminName, quantity, imageURL,watt, shade);
 
                     lampList.add(lamp);
                 }

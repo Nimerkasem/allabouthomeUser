@@ -29,7 +29,7 @@
         android:background="@drawable/input_design"
         android:layout_marginLeft="80dp"/>
 
-    <EditText
+    <TextView
         android:id="@+id/email"
         android:layout_width="250dp"
         android:layout_height="42dp"
@@ -97,18 +97,6 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="18sp" />
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/delete"
-        android:layout_width="250dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/phone"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="525dp"
-        android:layout_marginRight="15dp"
-        android:background="@drawable/buttons"
-        android:text="Delete Account"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
+
 
 </FrameLayout>
