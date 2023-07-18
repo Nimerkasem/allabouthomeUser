@@ -67,7 +67,7 @@ public class MyCartFragment extends Fragment {
 
     private void payment() {
         for (int i = 0; i < cartList.size(); i++) {
-            Item item = (Item) cartList.get(i);
+            Item item =  cartList.get(i);
             String itemUid = item.getUid();
             int currentQuantity = item.getQuantity();
             String adminUid = item.getAdminuid();

@@ -2,6 +2,8 @@ package com.finalproject.allabouthomeuser.models;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
 public class Item {
     private String uid;
     private String name;
@@ -11,24 +13,46 @@ public class Item {
     private int quantity;
     private String image;
     private String adminuid;
+    private ArrayList<String> categories;
 
     public Item(String name){
-        this.name=name;
-
+        this.name = name;
     }
 
-    public Item(String uid,String adminuid,String name, String description, int price, String adminName, int quantity, String image) {
+    public Item(String uid, String adminuid, String name, String description, int price, String adminName, int quantity, String image) {
+        this.uid = uid;
         this.name = name;
         this.description = description;
         this.price = price;
         this.adminName = adminName;
         this.quantity = quantity;
         this.image = image;
-        this.uid=uid;
-        this.adminuid=adminuid;
+        this.adminuid = adminuid;
+    }
+
+
+
+    public Item(ArrayList<String> categories, String uid, String adminuid, String name, String description, int price, String adminName, int quantity, String image) {
+        this.categories = categories;
+        this.uid = uid;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.adminName = adminName;
+        this.quantity = quantity;
+        this.image = image;
+        this.adminuid = adminuid;
     }
 
     public Item() {
+    }
+
+    public ArrayList<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(ArrayList<String> categories) {
+        this.categories = categories;
     }
 
     public String getUid() {
@@ -62,6 +86,7 @@ public class Item {
     public String getImage() {
         return image;
     }
+
     public void setImage(String image) {
         this.image = image;
     }
@@ -69,5 +94,5 @@ public class Item {
     public void setQuantity(int newQuantity) {
         this.quantity = newQuantity;
     }
-}
 
+}

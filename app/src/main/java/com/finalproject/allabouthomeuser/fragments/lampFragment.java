@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.finalproject.allabouthomeuser.R;
+import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.Lamp;
 import com.finalproject.allabouthomeuser.models.LampAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -73,8 +74,12 @@ public class lampFragment extends Fragment {
                     int shade = Math.toIntExact(document.getLong("shade"));
                     double watt = document.getLong("wattage").intValue();
                     String imageURL = document.getString("imageURL");
+                    ArrayList<String> categories = (ArrayList<String>) document.get("categories");
 
-                    Lamp lamp = new Lamp(itemUid,adminuid, name, description, price, adminName, quantity, imageURL,watt, shade);
+
+                    Lamp lamp = new Lamp(categories,itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
+
+
 
                     lampList.add(lamp);
                 }

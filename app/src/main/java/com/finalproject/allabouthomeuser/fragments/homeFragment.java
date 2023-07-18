@@ -174,9 +174,10 @@ public class homeFragment extends Fragment implements View.OnClickListener {
 
                             StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                                ArrayList<String> categories = (ArrayList<String>) document.get("categories");
 
+                                Item item = new Item(categories,itemUid, adminuid, name, description, price, adminName, quantity, imageURL);
 
-                                Item item = new Item(itemUid, adminuid, name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
 
 
                                 itemList.add(item);

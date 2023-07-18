@@ -1,9 +1,14 @@
 package com.finalproject.allabouthomeuser.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class all extends Fragment {
@@ -34,20 +40,53 @@ public class all extends Fragment {
     private ItemAdapter itemAdapter;
 
 
+    private Spinner categorySpinner;
+
     @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.all, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.all, container, false);
 
-            itemList = new ArrayList<>();
+        itemList = new ArrayList<>();
+        itemRecyclerView = view.findViewById(R.id.itemRecyclerView);
+        itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        itemAdapter = new ItemAdapter(getActivity(), itemList);
+        itemRecyclerView.setAdapter(itemAdapter);
 
-            itemRecyclerView = view.findViewById(R.id.itemRecyclerView);
-            itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            itemAdapter = new ItemAdapter(getActivity(), itemList);
-            itemRecyclerView.setAdapter(itemAdapter);
+        categorySpinner = view.findViewById(R.id.categorySpinner);
+
+        List<String> availableCategories = Arrays.asList("Bathroom", "Bedroom", "Home Office", "Kitchen", "Laundry Room", "Living Room");
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, availableCategories);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(spinnerAdapter);
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCategory = availableCategories.get(position);
+                filterItemsByCategory(selectedCategory);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         getAllProducts();
         getAllLamps();
-            return view;
+        return view;
+    }
+
+    private void filterItemsByCategory(String selectedCategory) {
+        List<Item> filteredItems = new ArrayList<>();
+        for (Item item : itemList) {
+            ArrayList<String> categories = item.getCategories();
+            if (categories.contains(selectedCategory)) {
+                filteredItems.add(item);
+            }
         }
+        itemAdapter.setItems(filteredItems);
+        itemAdapter.notifyDataSetChanged();
+    }
+
     private void getAllProducts() {
         allProductsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -56,7 +95,6 @@ public class all extends Fragment {
                     int quantity = document.getLong("quantity").intValue();
                     if (quantity > 0) {
 
-                        // Retrieve the data for each product
                         String name = document.getString("name");
                         String description = document.getString("description");
                         int price = document.getLong("price").intValue();
@@ -71,8 +109,9 @@ public class all extends Fragment {
                             StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
                             imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
 
+                                ArrayList<String> categories = (ArrayList<String>) document.get("categories");
 
-                                Item item = new Item(itemUid, adminuid, name, description, price, adminName, quantity, imageURL); // Pass imageURL, not bmp
+                                Item item = new Item(categories,itemUid, adminuid, name, description, price, adminName, quantity, imageURL);
 
 
                                 itemList.add(item);
@@ -93,7 +132,6 @@ public class all extends Fragment {
         });
     }
 
-    // Function to get all lamps
     private void getAllLamps() {
         allLampsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -101,7 +139,6 @@ public class all extends Fragment {
                     String itemUid = document.getId();
                     int quantity = document.getLong("quantity").intValue();
                     if (quantity > 0) {
-                        // Retrieve the data for each lamp
                         String name = document.getString("name");
                         String description = document.getString("description");
                         int price = document.getLong("price").intValue();
@@ -112,9 +149,10 @@ public class all extends Fragment {
 
 
                         String imageURL = document.getString("imageURL");
+                        ArrayList<String> categories = (ArrayList<String>) document.get("categories");
 
 
-                        Item item = new Lamp(itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
+                        Item item = new Lamp(categories,itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
 
 
                         itemList.add(item);
@@ -128,6 +166,8 @@ public class all extends Fragment {
             }
         });
     }
+
+
 
 
 }

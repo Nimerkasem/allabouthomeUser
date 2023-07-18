@@ -4,8 +4,11 @@
     android:layout_height="match_parent"
     tools:context=".fragments.homeFragment">
 
-
-
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRecyclerView"
@@ -14,8 +17,4 @@
         android:layout_marginTop="50dp"
         tools:listitem="@layout/item_layout" />
 
-
-
-    </FrameLayout>
-
-
+</FrameLayout>

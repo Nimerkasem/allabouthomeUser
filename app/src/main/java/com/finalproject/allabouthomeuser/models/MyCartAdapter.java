@@ -66,7 +66,6 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         holder.increaseQuantityButton.setOnClickListener(v -> {
             String itemUid = item.getUid();
 
-            // Check in alllamps collection
             db.collection("alllamps").document(itemUid).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
@@ -82,11 +81,9 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                             updateCartItem(item);
                             fragment.updateTotalPrice();
                         } else {
-                            // Quantity limit reached
-                            // Show a message or perform any desired action
+
                         }
                     } else {
-                        // Check in allproducts collection
                         db.collection("allproducts").document(itemUid).get().addOnCompleteListener(secondTask -> {
                             if (secondTask.isSuccessful()) {
                                 DocumentSnapshot secondDocument = secondTask.getResult();

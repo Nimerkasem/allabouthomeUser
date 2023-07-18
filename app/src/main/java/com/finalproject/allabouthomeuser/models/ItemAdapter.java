@@ -65,6 +65,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         });
     }
 
+    public void setItems(List<Item> items) {
+        itemList = items;
+    }
 
     @Override
     public int getItemCount() {
@@ -172,21 +175,34 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
                                 if (adminCart.containsKey(adminId)) {
                                     int existingPrice = adminCart.get(adminId);
-                                    int totalPriceInt = totalPrice;
-                                    int newPrice = existingPrice + totalPriceInt;
+                                    int newPrice = existingPrice + totalPrice;
                                     adminCart.put(adminId, newPrice);
                                 }
 
-                                db.collection("Users").document(userId)
-                                        .collection("adminCart")
-                                        .document(adminId)
-                                        .set(adminCart)
-                                        .addOnSuccessListener(aVoid -> {
-                                            Log.d(TAG, "Admin cart successfully updated!");
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Log.w(TAG, "Error updating admin cart", e);
-                                        });
+                                if (adminCart.isEmpty()) {
+                                    // Delete the document when the adminCart is empty
+                                    db.collection("Users").document(userId)
+                                            .collection("adminCart")
+                                            .document(adminId)
+                                            .delete()
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d(TAG, "Admin cart document successfully deleted!");
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.w(TAG, "Error deleting admin cart document", e);
+                                            });
+                                } else {
+                                    db.collection("Users").document(userId)
+                                            .collection("adminCart")
+                                            .document(adminId)
+                                            .set(adminCart)
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d(TAG, "Admin cart successfully updated!");
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.w(TAG, "Error updating admin cart", e);
+                                            });
+                                }
                             }
                         } else {
                             HashMap<String, Integer> adminCart = new HashMap<>();
