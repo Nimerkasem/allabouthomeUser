@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +15,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.activities.EditPassFActivity;
-import com.finalproject.allabouthomeuser.activities.HomeActivity;
-import com.finalproject.allabouthomeuser.activities.LoginActivity;
 import com.finalproject.allabouthomeuser.models.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -75,17 +70,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document != null && document.exists()) {
-                            // Retrieve the user object from the Firestore document
                             user = document.toObject(Users.class);
-
-                            // Update the EditText fields with the user data
                             if (user != null) {
                                 username.setText(user.getUsername());
                                 email.setText(user.getEmail());
                                 phone.setText(user.getPhone());
                                 birthday.setText(user.getBirthday());
-
-                                // Load profile image if available
                                 String profilePicUrl = user.getProfilePicUrl();
                                 if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
                                     Picasso.get().load(profilePicUrl).into(profile);
@@ -162,7 +152,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            // Navigate back to the UserProfileFragment
                             FragmentManager fragmentManager = getParentFragmentManager();
                             fragmentManager.popBackStack();
                             Toast.makeText(getActivity(), "Profile updated successfully", Toast.LENGTH_SHORT).show();

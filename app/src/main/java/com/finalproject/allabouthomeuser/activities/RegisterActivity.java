@@ -8,10 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.models.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,7 +27,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText inputUsername, inputEmail, inputPhone, inputBirthday, inputCity, inputPass;
     private Button registerBtn, loginBtn;
@@ -40,20 +37,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         inputUsername = (EditText) findViewById(R.id.username);
         inputEmail = (EditText) findViewById(R.id.email);
         inputPhone = (EditText) findViewById(R.id.phone);
         inputBirthday = (EditText) findViewById(R.id.birthday);
         inputCity = (EditText) findViewById(R.id.City);
         inputPass = (EditText) findViewById(R.id.pass);
-
         registerBtn = (Button) findViewById(R.id.registerBtn);
         loginBtn = (Button) findViewById(R.id.loginBtn);
-
         registerBtn.setOnClickListener(this);
         loginBtn.setOnClickListener((View.OnClickListener) this);
-
         database= FirebaseFirestore.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -68,7 +61,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             isValidData();
         }
     }
-
     private void isValidData() {
         String username=inputUsername.getText().toString();
         String email=inputEmail.getText().toString();
@@ -76,7 +68,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String birthday=inputBirthday.getText().toString();
         String city=inputCity.getText().toString();
         String password=inputPass.getText().toString();
-
         if(TextUtils.isEmpty(username) || username.length()<5){
             Toast.makeText(this, "username must have 5 Character or more", Toast.LENGTH_SHORT).show();
             return;
@@ -104,8 +95,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         checkIfUserExists(email);
     }
 
-
-
     private void checkIfUserExists(String email) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
         Query query = usersRef.orderByChild("email").equalTo(email);
@@ -120,15 +109,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     createAccount();
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Error occurred, handle the error
             }
         });
     }
-
-
     private void createAccount() {
         String username=inputUsername.getText().toString();
         String email=inputEmail.getText().toString();
@@ -136,9 +122,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String birthday=inputBirthday.getText().toString();
         String city=inputCity.getText().toString();
         String password=inputPass.getText().toString();
-
         Users u =new Users(username,email,phone,birthday,city,password);
-
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -170,7 +154,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 });
     }
 
-
     public static boolean isValid(String pass) {
         int f1=0,f2=0,f3=0;
         if(pass.length()<8) {
@@ -189,8 +172,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return false;
         }
     }
-
-
 }
 
 

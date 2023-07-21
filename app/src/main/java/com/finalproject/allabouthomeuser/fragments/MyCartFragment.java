@@ -1,6 +1,9 @@
 package com.finalproject.allabouthomeuser.fragments;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,18 +21,15 @@ import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.Lamp;
 import com.finalproject.allabouthomeuser.models.MyCartAdapter;
 import com.finalproject.allabouthomeuser.models.myCart;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.android.gms.tasks.Tasks;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +74,6 @@ public class MyCartFragment extends Fragment {
             firestore.collection("allproducts").document(itemUid)
                     .update("quantity", FieldValue.increment(-currentQuantity))
                     .addOnFailureListener(e -> {
-                        showMessage("Error updating quantity in 'allproducts' collection: " + e.getMessage());
                     });
 
             firestore.collection("Admins").document(adminUid)
@@ -117,7 +114,6 @@ public class MyCartFragment extends Fragment {
                 firestore.collection("alllamps").document(itemUid)
                         .update("quantity", FieldValue.increment(-lampCurrentQuantity))
                         .addOnFailureListener(e -> {
-                            showMessage("Error updating quantity in 'alllamps' collection: " + e.getMessage());
                         });
 
                 firestore.collection("Admins").document(adminUid)
@@ -153,6 +149,8 @@ public class MyCartFragment extends Fragment {
             }
         }
 
+
+
         String userId = auth.getCurrentUser().getUid();
         firestore.collection("Users")
                 .document(userId)
@@ -170,7 +168,7 @@ public class MyCartFragment extends Fragment {
                         deleteTasks.add(document.getReference().delete());
                     }
                     Tasks.whenAll(deleteTasks)
-                            .addOnSuccessListener(aVoid -> {
+                            .addOnSuccessListener(deleteVoid -> {
                                 for (Map.Entry<String, Integer> entry : adminCart.entrySet()) {
                                     String adminUid = entry.getKey();
                                     Integer amountToSend = entry.getValue();
@@ -183,28 +181,26 @@ public class MyCartFragment extends Fragment {
                                             .document(adminUid)
                                             .collection("bag")
                                             .add(bagData)
-                                            .addOnSuccessListener(documentReference -> {
+                                            .addOnSuccessListener(bagVoid -> {
                                                 for (Item item : cartList) {
                                                     String itemName = item.getName();
                                                     int amountBought = item.getQuantity();
                                                     String itemAdminUid = item.getAdminuid();
-
                                                     if (adminUid.equals(itemAdminUid)) {
                                                         firestore.collection("Admins").document(adminUid)
                                                                 .collection("sales")
                                                                 .whereEqualTo("name", itemName)
                                                                 .get()
-                                                                .addOnSuccessListener(queryDocumentSnapshots -> {
-                                                                    if (!queryDocumentSnapshots.isEmpty()) {
-                                                                        DocumentSnapshot salesDocument = queryDocumentSnapshots.getDocuments().get(0);
+                                                                .addOnSuccessListener(salesQueryDocumentSnapshots -> {
+                                                                    if (!salesQueryDocumentSnapshots.isEmpty()) {
+                                                                        DocumentSnapshot salesDocument = salesQueryDocumentSnapshots.getDocuments().get(0);
                                                                         String salesDocumentId = salesDocument.getId();
                                                                         long existingQuantityBought = (long) salesDocument.get("quantityBought");
                                                                         long updatedQuantityBought = existingQuantityBought + amountBought;
-
                                                                         firestore.collection("Admins").document(adminUid)
                                                                                 .collection("sales").document(salesDocumentId)
                                                                                 .update("quantityBought", updatedQuantityBought)
-                                                                                .addOnSuccessListener(aVoid2 -> {
+                                                                                .addOnSuccessListener(updateVoid -> {
                                                                                     System.out.println("Quantity updated successfully in 'sales' subcollection for item: " + itemName);
                                                                                 })
                                                                                 .addOnFailureListener(e -> {
@@ -217,7 +213,7 @@ public class MyCartFragment extends Fragment {
 
                                                                         firestore.collection("Admins").document(adminUid)
                                                                                 .collection("sales").add(salesData)
-                                                                                .addOnSuccessListener(documentReference2 -> {
+                                                                                .addOnSuccessListener(addVoid -> {
                                                                                     System.out.println("New item added to 'sales' subcollection: " + itemName);
                                                                                 })
                                                                                 .addOnFailureListener(e -> {
@@ -230,6 +226,25 @@ public class MyCartFragment extends Fragment {
                                                                 });
                                                     }
                                                 }
+
+                                                // Save the commission to the appadmin collection under the adminUid
+                                                Integer totalPriceAfterCommission = entry.getValue();
+                                                double commissionAmount = totalPriceAfterCommission * 0.03;
+                                                Map<String, Object> commissionData = new HashMap<>();
+                                                commissionData.put("amount", commissionAmount);
+
+                                                firestore.collection("appadmin")
+                                                        .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
+                                                        .collection("commissions")
+                                                        .document(adminUid) // Use adminUid as the document ID
+                                                        .set(commissionData)
+                                                        .addOnSuccessListener(commissionVoid -> {
+                                                            Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminUid);
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            Log.w(TAG, "Error saving commission to appadmin for admin: " + adminUid, e);
+                                                        });
+
                                             })
                                             .addOnFailureListener(e -> {
                                                 System.out.println("Error adding bag data for admin: " + adminUid + ": " + e.getMessage());
@@ -241,12 +256,11 @@ public class MyCartFragment extends Fragment {
                                         .addOnCompleteListener(task -> {
                                             List<Task<Void>> clearCartTasks = new ArrayList<>();
                                             for (QueryDocumentSnapshot doc : task.getResult()) {
-
                                                 clearCartTasks.add(doc.getReference().delete());
                                             }
 
                                             Tasks.whenAll(clearCartTasks)
-                                                    .addOnSuccessListener(aVoid1 -> {
+                                                    .addOnSuccessListener(clearVoid -> {
                                                         cartList.clear();
                                                         cartAdapter.notifyDataSetChanged();
                                                         displayTotalPrice(0.0);

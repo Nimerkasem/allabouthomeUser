@@ -1,9 +1,7 @@
 package com.finalproject.allabouthomeuser.models;
 
 import static android.content.ContentValues.TAG;
-
 import static com.finalproject.allabouthomeuser.models.ItemAdapter.updateAdminCart;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.fragments.MyCartFragment;
@@ -27,11 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder> {
     private Context context;
     private List<myCart> list;
@@ -45,8 +36,6 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
         mAuth = FirebaseAuth.getInstance();
         this.fragment = fragment;
     }
-
-
     @NonNull
     @Override
     public MyCartAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -58,14 +47,12 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         myCart item = list.get(position);
         holder.name.setText(item.getName());
-        holder.price.setText((item.getPrice())+"₪");
+        holder.price.setText((item.getPrice()) + "₪");
         holder.quantity.setText(String.valueOf(item.getQuantity()));
         mAuth = FirebaseAuth.getInstance();
         Glide.with(context).load(item.getImage()).into(holder.image);
-
         holder.increaseQuantityButton.setOnClickListener(v -> {
             String itemUid = item.getUid();
-
             db.collection("alllamps").document(itemUid).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
@@ -82,6 +69,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                             fragment.updateTotalPrice();
                         } else {
 
+                            Toast.makeText(context, "cant get this quantity", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         db.collection("allproducts").document(itemUid).get().addOnCompleteListener(secondTask -> {
@@ -91,7 +79,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                                     int maxQuantity = secondDocument.getLong("quantity").intValue();
                                     int quantity = Integer.parseInt(holder.quantity.getText().toString());
 
-                                    if (quantity <= maxQuantity) {
+                                    if (quantity < maxQuantity) {
                                         quantity++;
                                         holder.quantity.setText(String.valueOf(quantity));
                                         item.setQuantity(quantity);
@@ -99,20 +87,21 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                                         updateCartItem(item);
                                         fragment.updateTotalPrice();
                                     } else {
-                                        // Quantity limit reached
-                                        // Show a message or perform any desired action
+
+                                        Toast.makeText(context, "cant get this quantity", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    // Item not found in either collection
-                                    // Handle the case where the item doesn't exist
+
+                                    Toast.makeText(context, "Item not found", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                // Handle failure
+
+                                Toast.makeText(context, "Failed to retrieve item", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } else {
-                    // Handle failure
+                    Toast.makeText(context, "Failed to retrieve item", Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -131,8 +120,6 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
             }
         });
 
-
-
         holder.remove.setOnClickListener(v -> {
             list.remove(position);
             notifyDataSetChanged();
@@ -143,54 +130,66 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
 
         holder.addButton.setOnClickListener(v -> {
             if (item instanceof Lamp) {
-                Lamp lamp = (Lamp) item;
+                Lamp lamp =  item;
                 String lampUid = lamp.getUid();
 
                 String userId = mAuth.getCurrentUser().getUid();
 
-                db.collection("Users").document(userId).collection("cart").document(lampUid)
+                db.collection("alllamps").document(lampUid)
                         .get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
+                        .addOnSuccessListener(allLampsDocumentSnapshot -> {
+                            if (allLampsDocumentSnapshot.exists()) {
                                 try {
-                                    String lampName = documentSnapshot.getString("name");
-                                    double wattage = documentSnapshot.getDouble("watt");
-                                    int shade = documentSnapshot.getLong("shade").intValue();
+                                    List<String> categories = (List<String>) allLampsDocumentSnapshot.get("categories");
 
-                                    Map<String, Object> lampData = new HashMap<>();
-                                    lampData.put("uid", lampUid);
-                                    lampData.put("name", lampName);
-                                    lampData.put("wattage", wattage);
-                                    lampData.put("shade", shade);
+                                    db.collection("Users").document(userId).collection("cart").document(lampUid)
+                                            .get()
+                                            .addOnSuccessListener(cartDocumentSnapshot -> {
+                                                if (cartDocumentSnapshot.exists()) {
+                                                    String lampName = cartDocumentSnapshot.getString("name");
+                                                    double wattage = cartDocumentSnapshot.getDouble("watt");
+                                                    int shade = cartDocumentSnapshot.getLong("shade").intValue();
 
-                                    db.collection("Users").document(userId).collection("roomlamps")
-                                            .add(lampData)
-                                            .addOnSuccessListener(documentReference -> {
-                                                showMessage("Lamp added to roomlamps.");
+                                                    Map<String, Object> lampData = new HashMap<>();
+                                                    lampData.put("uid", lampUid);
+                                                    lampData.put("name", lampName);
+                                                    lampData.put("wattage", wattage);
+                                                    lampData.put("shade", shade);
+                                                    lampData.put("categories", categories);
+
+                                                    db.collection("Users").document(userId).collection("roomlamps")
+                                                            .add(lampData)
+                                                            .addOnSuccessListener(documentReference -> {
+                                                                showMessage("Lamp added to roomlamps.");
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                showMessage("Failed to add lamp to roomlamps: " + e.getMessage());
+                                                            });
+                                                } else {
+                                                    showMessage("Lamp not found in the user's cart.");
+                                                }
                                             })
                                             .addOnFailureListener(e -> {
-                                                showMessage("Failed to add lamp to roomlamps: " + e.getMessage());
+                                                showMessage("Error retrieving lamp details from the cart: " + e.getMessage());
                                             });
                                 } catch (Exception e) {
                                     showMessage("Error processing lamp details: " + e.getMessage());
                                 }
                             } else {
-                                showMessage("Lamp not found in the user's cart.");
+                                showMessage("Lamp not found in the alllamps collection.");
                             }
                         })
                         .addOnFailureListener(e -> {
-                            showMessage("Error retrieving lamp details: " + e.getMessage());
+                            showMessage("Error retrieving lamp details from alllamps collection: " + e.getMessage());
                         });
             } else {
                 showMessage("Selected item is not a lamp.");
             }
         });
-
     }
 
 
-
-    @Override
+        @Override
     public int getItemCount() {
         return list.size();
     }
@@ -218,8 +217,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                 .document(userId)
                 .collection("cart")
                 .document(item.getUid());
-
-        cartItemRef.get()
+                 cartItemRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         myCart cartItem = documentSnapshot.toObject(myCart.class);
@@ -233,7 +231,6 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d(TAG, "Cart item quantity successfully updated!");
 
-                                        // Update the admin cart based on the quantity difference
                                         updateAdminCart(userId, item.getAdminuid(), totalDiff);
                                     })
                                     .addOnFailureListener(e -> {

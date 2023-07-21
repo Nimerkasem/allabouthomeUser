@@ -1,5 +1,7 @@
 package com.finalproject.allabouthomeuser.models;
 import static android.content.ContentValues.TAG;
+import static com.finalproject.allabouthomeuser.models.ItemAdapter.updateAdminCart;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,16 +53,13 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
     @Override
     public void onBindViewHolder(@NonNull LampViewHolder holder, int position) {
         Lamp lamp = lampList.get(position);
-
         holder.txtName.setText(lamp.getName());
         holder.txtDescription.setText(lamp.getDescription());
         holder.txtPrice.setText((lamp.getPrice())+"₪");
         holder.txtAdminName.setText(lamp.getAdminName());
         holder.txtWatt.setText((lamp.getWatt())+"Watt");
         holder.txtShade.setText((lamp.getShade())+"K");
-
         Glide.with(holder.itemView.getContext()).load(lamp.getImage()).into(holder.imgLamp);
-
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,18 +112,19 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                             if (secondDocument.exists()) {
                                 int maxQuantity = secondDocument.getLong("quantity").intValue();
 
-                                if (quantity  <= maxQuantity) {
+                                if (quantity <= maxQuantity) {
                                     int newQuantity = quantity + 1;
                                     cartItemRef.update("quantity", newQuantity)
                                             .addOnSuccessListener(aVoid -> {
+                                                updateAdminCart(userId, lamp.getAdminuid(), lamp.getPrice());
+
                                                 showToast("Lamp added to cart successfully");
                                             })
                                             .addOnFailureListener(e -> {
                                                 Log.w(TAG, "Error updating document", e);
                                             });
                                 } else {
-                                    // Quantity limit reached
-                                    // Show a message or perform any desired action
+                                    showToast("Can't afford this quantity");
                                 }
                             }
                         }
@@ -133,6 +133,8 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                     lamp.setQuantity(1);
                     cartItemRef.set(lamp)
                             .addOnSuccessListener(aVoid -> {
+                                updateAdminCart(userId, lamp.getAdminuid(), lamp.getPrice());
+
                                 showToast("Lamp added to cart successfully");
                             })
                             .addOnFailureListener(e -> {

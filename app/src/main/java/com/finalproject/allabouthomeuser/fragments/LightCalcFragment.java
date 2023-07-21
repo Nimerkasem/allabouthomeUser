@@ -1,8 +1,8 @@
 package com.finalproject.allabouthomeuser.fragments;
 
 import static com.finalproject.allabouthomeuser.models.room.Suitablelamps;
+import static com.finalproject.allabouthomeuser.models.room.getShade;
 import static com.finalproject.allabouthomeuser.models.room.lamphanging;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,26 +13,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-
 import com.finalproject.allabouthomeuser.models.Lamp;
 import com.finalproject.allabouthomeuser.models.room;
 import com.finalproject.allabouthomeuser.R;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 public class LightCalcFragment extends Fragment {
     private EditText etLength;
@@ -45,7 +41,6 @@ public class LightCalcFragment extends Fragment {
 
     private TextView tvAngle;
     private  TextView setheight;
-    List<Lamp> lampList = new ArrayList<>();
     FirebaseAuth mAuth;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -120,51 +115,35 @@ public class LightCalcFragment extends Fragment {
         room a = new room(length, width, height, kind);
         String userId = mAuth.getCurrentUser().getUid();
 
-        List<Task<DocumentSnapshot>> lampTasks = new ArrayList<>();
-
-        db.collection("Users").document(userId).collection("roomlamps").get()
+        CollectionReference roomLampsCollectionRef = db.collection("Users").document(userId).collection("roomlamps");
+        roomLampsCollectionRef.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        String lampUid = documentSnapshot.getString("uid");
-                        Task<DocumentSnapshot> lampTask = db.collection("roomlamps").document(lampUid).get();
-                        lampTasks.add(lampTask);
+                    List<Lamp> lampList = new ArrayList<>();
+
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        if (documentSnapshot.exists()) {
+                            double wattage = documentSnapshot.getDouble("wattage");
+                            int shade = documentSnapshot.getLong("shade").intValue();
+                            String name = documentSnapshot.getString("name");
+                            String uid = documentSnapshot.getString("uid");
+                            ArrayList<String> categories = (ArrayList<String>) documentSnapshot.get("categories");
+
+
+                            Lamp lamp = new Lamp(wattage, name, shade, uid,categories);
+                            lampList.add(lamp);
+                        }
                     }
 
-                    Tasks.whenAllSuccess(lampTasks)
-                            .addOnSuccessListener(taskSnapshots -> {
-                                List<Lamp> lampList = new ArrayList<>();
-
-                                for (Object snapshot : taskSnapshots) {
-                                    DocumentSnapshot lampDocumentSnapshot = (DocumentSnapshot) snapshot;
-                                    if (lampDocumentSnapshot.exists()) {
-                                        double wattage = lampDocumentSnapshot.getDouble("wattage");
-                                        int shade = lampDocumentSnapshot.getLong("shade").intValue();
-                                        String name = lampDocumentSnapshot.getString("name");
-                                        Lamp lamp = new Lamp(wattage, name, shade);
-                                        lampList.add(lamp);
-                                    }
-                                }
-
-                                if (Suitablelamps(a, lampList)) {
-                                    showMessage("Lamps match the room");
-                                } else {
-                                    showMessage("Lamps DON'T match the room");
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                showMessage("Error retrieving lamp details: " + e.getMessage());
-                            });
-
+                    if (Suitablelamps(a, lampList))
+                        showMessage("המנורות מתאימות לחדר");
+                    else {
+                        showMessage("המנורות לא מתאימות לחדר");
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    showMessage("Error retrieving room lamps: " + e.getMessage());
+                    showMessage("Error retrieving lamp details: " + e.getMessage());
                 });
     }
-
-
-
-
-
 
 
     private void showMessage(String message) {
@@ -179,7 +158,7 @@ public class LightCalcFragment extends Fragment {
 
         String shadeMessage = "Shade: " + shade+"k";
         String AngleMassage ="Angle: " + Angle+"°";
-        tvLedWatt.setText("Watt: "+String.valueOf(ledWatt)+" LED Watt");
+        tvLedWatt.setText("Watt: "+(ledWatt)+" LED Watt");
         tvShade.setText(shadeMessage);
         tvAngle.setText(AngleMassage);
         setheight.setText(massege);

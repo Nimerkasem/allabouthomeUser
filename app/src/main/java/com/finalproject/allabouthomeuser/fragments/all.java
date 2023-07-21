@@ -1,34 +1,28 @@
 package com.finalproject.allabouthomeuser.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.ItemAdapter;
 import com.finalproject.allabouthomeuser.models.Lamp;
-import com.finalproject.allabouthomeuser.models.LampAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 public class all extends Fragment {
     private List<Item> itemList;
     private RecyclerView itemRecyclerView;

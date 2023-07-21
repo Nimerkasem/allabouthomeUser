@@ -1,7 +1,6 @@
 package com.finalproject.allabouthomeuser.models;
 
 import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Button; // import standard android Button
-import android.widget.Toast; // import Toast
-
+import android.widget.Button;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.finalproject.allabouthomeuser.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
     private List<Item> itemList;
     private FirebaseAuth mAuth;
@@ -47,15 +43,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Item item = itemList.get(position);
-
         Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.itemImage);
-
         holder.itemName.setText(item.getName());
         holder.itemDescription.setText(item.getDescription());
         holder.itemPrice.setText(String.valueOf(item.getPrice())+"₪");
         holder.itemAdmin.setText(item.getAdminName());
-
-
         holder.addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,8 +83,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             itemAdmin = itemView.findViewById(R.id.itemAdmin);
             addToCart = itemView.findViewById(R.id.addtocart);
         }
-
-
     }
 
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -107,14 +97,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     int quantity = document.getLong("quantity").intValue();
-
                     db.collection("allproducts").document(product.getUid()).get().addOnCompleteListener(secondTask -> {
                         if (secondTask.isSuccessful()) {
                             DocumentSnapshot secondDocument = secondTask.getResult();
                             if (secondDocument.exists()) {
                                 int maxQuantity = secondDocument.getLong("quantity").intValue();
-
-                                if (quantity <= maxQuantity) {
+                                if (quantity < maxQuantity) {
                                     int newQuantity = quantity + 1;
                                     cartItemRef.update("quantity", newQuantity)
                                             .addOnSuccessListener(aVoid -> {
@@ -126,8 +114,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                                 Log.w(TAG, "Error updating document", e);
                                             });
                                 } else {
-                                    // Quantity limit reached
-                                    // Show a message or perform any desired action
+                                    showToast("cant afford this quantity");
                                 }
                             }
                         }
@@ -150,8 +137,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         });
     }
 
+    public static void updateAdminCart(String userId, String adminId, double totalPrice) {
+        double commissionAmount = totalPrice * 0.03;
+        double totalPriceAfterCommission = totalPrice - commissionAmount;
 
-    public static void updateAdminCart(String userId, String adminId, int totalPrice) {
         db.collection("Users").document(userId)
                 .collection("adminCart")
                 .document(adminId)
@@ -162,51 +151,41 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                         if (document.exists()) {
                             Map<String, Object> adminCartData = document.getData();
                             if (adminCartData != null) {
-                                HashMap<String, Integer> adminCart = new HashMap<>();
+                                HashMap<String, Double> adminCart = new HashMap<>();
                                 for (Map.Entry<String, Object> entry : adminCartData.entrySet()) {
                                     String key = entry.getKey();
                                     Object value = entry.getValue();
-                                    if (value instanceof Long) {
-                                        adminCart.put(key, ((Long) value).intValue());
+                                    if (value instanceof Double) {
+                                        adminCart.put(key, (Double) value);
+                                    } else if (value instanceof Long) {
+                                        adminCart.put(key, ((Long) value).doubleValue());
                                     } else if (value instanceof Integer) {
-                                        adminCart.put(key, (Integer) value);
+                                        adminCart.put(key, ((Integer) value).doubleValue());
                                     }
                                 }
 
                                 if (adminCart.containsKey(adminId)) {
-                                    int existingPrice = adminCart.get(adminId);
-                                    int newPrice = existingPrice + totalPrice;
+                                    Double existingPrice = adminCart.get(adminId);
+                                    double newPrice = existingPrice + totalPriceAfterCommission;
                                     adminCart.put(adminId, newPrice);
+                                } else {
+                                    adminCart.put(adminId, totalPriceAfterCommission);
                                 }
 
-                                if (adminCart.isEmpty()) {
-                                    // Delete the document when the adminCart is empty
-                                    db.collection("Users").document(userId)
-                                            .collection("adminCart")
-                                            .document(adminId)
-                                            .delete()
-                                            .addOnSuccessListener(aVoid -> {
-                                                Log.d(TAG, "Admin cart document successfully deleted!");
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Log.w(TAG, "Error deleting admin cart document", e);
-                                            });
-                                } else {
-                                    db.collection("Users").document(userId)
-                                            .collection("adminCart")
-                                            .document(adminId)
-                                            .set(adminCart)
-                                            .addOnSuccessListener(aVoid -> {
-                                                Log.d(TAG, "Admin cart successfully updated!");
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Log.w(TAG, "Error updating admin cart", e);
-                                            });
-                                }
+                                db.collection("Users").document(userId)
+                                        .collection("adminCart")
+                                        .document(adminId)
+                                        .set(adminCart)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d(TAG, "Admin cart successfully updated!");
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.w(TAG, "Error updating admin cart", e);
+                                        });
                             }
                         } else {
-                            HashMap<String, Integer> adminCart = new HashMap<>();
-                            adminCart.put(adminId, totalPrice);
+                            HashMap<String, Double> adminCart = new HashMap<>();
+                            adminCart.put(adminId, totalPriceAfterCommission);
 
                             db.collection("Users").document(userId)
                                     .collection("adminCart")
@@ -224,6 +203,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     }
                 });
     }
+
 
     private void showToast(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();

@@ -1,22 +1,20 @@
 package com.finalproject.allabouthomeuser.models;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
-
 public class Item {
     private String uid;
     private String name;
     private String description;
-    private int price;
+    private static int price;
     private String adminName;
     private int quantity;
     private String image;
-    private String adminuid;
-    private ArrayList<String> categories;
+    private static String adminuid;
+    private static ArrayList<String> categories;
 
-    public Item(String name){
+    public Item(String name, ArrayList<String> categories){
         this.name = name;
+        this.categories = categories;
     }
 
     public Item(String uid, String adminuid, String name, String description, int price, String adminName, int quantity, String image) {
@@ -47,7 +45,9 @@ public class Item {
     public Item() {
     }
 
-    public ArrayList<String> getCategories() {
+
+
+    public static ArrayList<String> getCategories() {
         return categories;
     }
 
@@ -67,11 +67,11 @@ public class Item {
         return description;
     }
 
-    public int getPrice() {
+    public static int getPrice() {
         return price;
     }
 
-    public String getAdminuid() {
+    public static String getAdminuid() {
         return adminuid;
     }
 

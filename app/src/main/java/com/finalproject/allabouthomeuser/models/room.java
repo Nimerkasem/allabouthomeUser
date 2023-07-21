@@ -1,5 +1,8 @@
 package com.finalproject.allabouthomeuser.models;
 
+import static com.finalproject.allabouthomeuser.models.Lamp.isRoomKindInCategoryList;
+import static com.finalproject.allabouthomeuser.models.room.getShade;
+
 import java.util.List;
 
 public class room {
@@ -132,21 +135,27 @@ public class room {
         return  (int) (Ledwatt(room)/lamp.getWatt()+1);
     }
     public static boolean Suitablelamps(room room, List<Lamp> lamps) {
-        if (lamps.isEmpty()) {
-            return false; }
-
+        if (lamps.isEmpty())
+            System.out.println("EROOOOOOOOR" );
         double totalWattage = 0;
-
         for (Lamp lamp : lamps) {
+            System.out.println("lamp Wattage : " + lamp.getWatt() + " LED Watt");
             totalWattage += lamp.getWatt();
-
-            if ( lamp.getShade() != getShade(room)) {
+            if (getShade(room) != lamp.getShade())
                 return false;
-            }
+          if (!isRoomKindInCategoryList(room.getKind()))
+               return false;
         }
+        double roomWattNeeded = Ledwatt(room);
 
-        return totalWattage >= Ledwatt(room);
+        System.out.println("Total Wattage of Lamps: " + totalWattage + " LED Watt");
+        System.out.println("Room Wattage Needed: " + roomWattNeeded + " LED Watt");
+
+        if (totalWattage < roomWattNeeded || totalWattage >roomWattNeeded*1.5)
+            return false;
+        return true;
     }
+
 
 
 

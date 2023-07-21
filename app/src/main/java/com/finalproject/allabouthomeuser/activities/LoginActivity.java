@@ -1,10 +1,8 @@
 package com.finalproject.allabouthomeuser.activities;
 
 import static android.content.ContentValues.TAG;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.finalproject.allabouthomeuser.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,14 +27,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         login_email =(EditText) findViewById(R.id.login_email);
         login_pass=(EditText) findViewById(R.id.login_pass);
         loginBtn=(Button) findViewById(R.id.loginBtn);
         join=(Button) findViewById(R.id.join);
-
         sp = getSharedPreferences("CurrentUser", 0);
-
         join.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
 
@@ -65,16 +59,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             loginAccountInFirebase(email,pass);
         }
     }
-
     private void loginAccountInFirebase(String email, String pass) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
         firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-
                 if (task.isSuccessful()) {
-                    // Login is successful
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finish();
                 } else {
