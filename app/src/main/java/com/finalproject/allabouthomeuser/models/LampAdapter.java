@@ -74,7 +74,7 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
         return lampList.size();
     }
 
-    public static class LampViewHolder extends RecyclerView.ViewHolder {
+        public static class LampViewHolder extends RecyclerView.ViewHolder {
 
         public TextView txtName, txtDescription, txtPrice, txtAdminName,  txtWatt, txtShade;
         public ImageView imgLamp;
@@ -100,6 +100,7 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                 .document(userId)
                 .collection("cart")
                 .document(lamp.getUid());
+
         cartItemRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -117,7 +118,6 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                                     cartItemRef.update("quantity", newQuantity)
                                             .addOnSuccessListener(aVoid -> {
                                                 updateAdminCart(userId, lamp.getAdminuid(), lamp.getPrice());
-
                                                 showToast("Lamp added to cart successfully");
                                             })
                                             .addOnFailureListener(e -> {
@@ -134,7 +134,6 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                     cartItemRef.set(lamp)
                             .addOnSuccessListener(aVoid -> {
                                 updateAdminCart(userId, lamp.getAdminuid(), lamp.getPrice());
-
                                 showToast("Lamp added to cart successfully");
                             })
                             .addOnFailureListener(e -> {

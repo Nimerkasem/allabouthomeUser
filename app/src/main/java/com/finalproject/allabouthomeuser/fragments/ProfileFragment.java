@@ -1,6 +1,7 @@
 package com.finalproject.allabouthomeuser.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -61,6 +62,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             view.findViewById(R.id.save).setOnClickListener(this);
             view.findViewById(R.id.editPass).setOnClickListener(this);
+
+
 
 
             DocumentReference userRef = db.collection("Users").document(userId);

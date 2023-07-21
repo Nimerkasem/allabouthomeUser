@@ -9,14 +9,16 @@ public class Lamp extends Item {
         super(categories, uid, adminuid, name, description, price, adminName, quantity, image);
         this.watt = watt;
         this.shade = shade;
+
     }
     public Lamp() {
     }
     public Lamp(double watt, String name, double shade ,String uid,ArrayList<String> categories ) {
-        super(name,categories );
+        super(name,categories);
         this.watt=watt;
         this.shade= (int) shade;
     }
+
     public double getWatt() {
         return watt;
     }

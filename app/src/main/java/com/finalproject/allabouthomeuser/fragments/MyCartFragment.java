@@ -23,6 +23,7 @@ import com.finalproject.allabouthomeuser.models.MyCartAdapter;
 import com.finalproject.allabouthomeuser.models.myCart;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -65,7 +66,7 @@ public class MyCartFragment extends Fragment {
 
     private void payment() {
         for (int i = 0; i < cartList.size(); i++) {
-            Item item =  cartList.get(i);
+            Item item = cartList.get(i);
             String itemUid = item.getUid();
             int currentQuantity = item.getQuantity();
             String adminUid = item.getAdminuid();
@@ -150,7 +151,6 @@ public class MyCartFragment extends Fragment {
         }
 
 
-
         String userId = auth.getCurrentUser().getUid();
         firestore.collection("Users")
                 .document(userId)
@@ -160,19 +160,42 @@ public class MyCartFragment extends Fragment {
                     HashMap<String, Integer> adminCart = new HashMap<>();
                     for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                         String adminId = document.getId();
-                        int totalPrice = document.getLong(adminId).intValue();
+                        Long totalPriceLong = document.getLong(adminId);
+                        int totalPrice = (totalPriceLong != null) ? totalPriceLong.intValue() : 0;
                         adminCart.put(adminId, totalPrice);
                     }
+
                     List<Task<Void>> deleteTasks = new ArrayList<>();
                     for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                         deleteTasks.add(document.getReference().delete());
                     }
+
                     Tasks.whenAll(deleteTasks)
                             .addOnSuccessListener(deleteVoid -> {
                                 for (Map.Entry<String, Integer> entry : adminCart.entrySet()) {
                                     String adminUid = entry.getKey();
                                     Integer amountToSend = entry.getValue();
 
+                                    double commissionAmount = amountToSend * 0.03;
+
+                                    String adminName = "asfds"; // Replace this with the actual admin name
+                                    Map<String, Object> commissionData = new HashMap<>();
+                                    commissionData.put("adminName", adminName);
+                                    commissionData.put("amount", commissionAmount);
+
+                                    firestore.collection("appadmin")
+                                            .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
+                                            .collection("commissions")
+                                            .document() // Use auto-generated document ID
+                                            .set(commissionData)
+                                            .addOnSuccessListener(commissionVoid -> {
+                                                Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminName);
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.w(TAG, "Error saving commission to appadmin for admin: " + adminName, e);
+                                            });
+
+                                    // Save the commission to the respective admin's bag collection
                                     Map<String, Object> bagData = new HashMap<>();
                                     bagData.put("adminUid", adminUid);
                                     bagData.put("amountToSend", amountToSend);
@@ -182,73 +205,57 @@ public class MyCartFragment extends Fragment {
                                             .collection("bag")
                                             .add(bagData)
                                             .addOnSuccessListener(bagVoid -> {
-                                                for (Item item : cartList) {
-                                                    String itemName = item.getName();
-                                                    int amountBought = item.getQuantity();
-                                                    String itemAdminUid = item.getAdminuid();
-                                                    if (adminUid.equals(itemAdminUid)) {
-                                                        firestore.collection("Admins").document(adminUid)
-                                                                .collection("sales")
-                                                                .whereEqualTo("name", itemName)
-                                                                .get()
-                                                                .addOnSuccessListener(salesQueryDocumentSnapshots -> {
-                                                                    if (!salesQueryDocumentSnapshots.isEmpty()) {
-                                                                        DocumentSnapshot salesDocument = salesQueryDocumentSnapshots.getDocuments().get(0);
-                                                                        String salesDocumentId = salesDocument.getId();
-                                                                        long existingQuantityBought = (long) salesDocument.get("quantityBought");
-                                                                        long updatedQuantityBought = existingQuantityBought + amountBought;
-                                                                        firestore.collection("Admins").document(adminUid)
-                                                                                .collection("sales").document(salesDocumentId)
-                                                                                .update("quantityBought", updatedQuantityBought)
-                                                                                .addOnSuccessListener(updateVoid -> {
-                                                                                    System.out.println("Quantity updated successfully in 'sales' subcollection for item: " + itemName);
-                                                                                })
-                                                                                .addOnFailureListener(e -> {
-                                                                                    System.out.println("Error updating quantity in 'sales' subcollection for item: " + itemName + ": " + e.getMessage());
-                                                                                });
-                                                                    } else {
-                                                                        Map<String, Object> salesData = new HashMap<>();
-                                                                        salesData.put("name", itemName);
-                                                                        salesData.put("quantityBought", amountBought);
-
-                                                                        firestore.collection("Admins").document(adminUid)
-                                                                                .collection("sales").add(salesData)
-                                                                                .addOnSuccessListener(addVoid -> {
-                                                                                    System.out.println("New item added to 'sales' subcollection: " + itemName);
-                                                                                })
-                                                                                .addOnFailureListener(e -> {
-                                                                                    System.out.println("Error adding item to 'sales' subcollection: " + itemName + ": " + e.getMessage());
-                                                                                });
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(e -> {
-                                                                    System.out.println("Error retrieving 'sales' subcollection for item: " + itemName + ": " + e.getMessage());
-                                                                });
-                                                    }
-                                                }
-
-                                                // Save the commission to the appadmin collection under the adminUid
-                                                Integer totalPriceAfterCommission = entry.getValue();
-                                                double commissionAmount = totalPriceAfterCommission * 0.03;
-                                                Map<String, Object> commissionData = new HashMap<>();
-                                                commissionData.put("amount", commissionAmount);
-
-                                                firestore.collection("appadmin")
-                                                        .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
-                                                        .collection("commissions")
-                                                        .document(adminUid) // Use adminUid as the document ID
-                                                        .set(commissionData)
-                                                        .addOnSuccessListener(commissionVoid -> {
-                                                            Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminUid);
-                                                        })
-                                                        .addOnFailureListener(e -> {
-                                                            Log.w(TAG, "Error saving commission to appadmin for admin: " + adminUid, e);
-                                                        });
-
+                                                Log.d(TAG, "Bag data successfully saved for admin: " + adminUid);
                                             })
                                             .addOnFailureListener(e -> {
-                                                System.out.println("Error adding bag data for admin: " + adminUid + ": " + e.getMessage());
+                                                Log.w(TAG, "Error saving bag data for admin: " + adminUid, e);
                                             });
+
+                                    for (Item item : cartList) {
+                                        String itemName = item.getName();
+                                        int amountBought = item.getQuantity();
+                                        String itemAdminUid = item.getAdminuid();
+
+                                        if (adminUid.equals(itemAdminUid)) {
+                                            firestore.collection("Admins").document(adminUid)
+                                                    .collection("sales")
+                                                    .whereEqualTo("name", itemName)
+                                                    .get()
+                                                    .addOnSuccessListener(salesQueryDocumentSnapshots -> {
+                                                        if (!salesQueryDocumentSnapshots.isEmpty()) {
+                                                            DocumentSnapshot salesDocument = salesQueryDocumentSnapshots.getDocuments().get(0);
+                                                            String salesDocumentId = salesDocument.getId();
+                                                            long existingQuantityBought = salesDocument.getLong("quantityBought");
+                                                            long updatedQuantityBought = existingQuantityBought + amountBought;
+                                                            firestore.collection("Admins").document(adminUid)
+                                                                    .collection("sales").document(salesDocumentId)
+                                                                    .update("quantityBought", updatedQuantityBought)
+                                                                    .addOnSuccessListener(updateVoid -> {
+                                                                        Log.d(TAG, "Quantity updated successfully in 'sales' subcollection for item: " + itemName);
+                                                                    })
+                                                                    .addOnFailureListener(e -> {
+                                                                        Log.w(TAG, "Error updating quantity in 'sales' subcollection for item: " + itemName + ": " + e.getMessage());
+                                                                    });
+                                                        } else {
+                                                            Map<String, Object> salesData = new HashMap<>();
+                                                            salesData.put("name", itemName);
+                                                            salesData.put("quantityBought", amountBought);
+
+                                                            firestore.collection("Admins").document(adminUid)
+                                                                    .collection("sales").add(salesData)
+                                                                    .addOnSuccessListener(addVoid -> {
+                                                                        Log.d(TAG, "New item added to 'sales' subcollection: " + itemName);
+                                                                    })
+                                                                    .addOnFailureListener(e -> {
+                                                                        Log.w(TAG, "Error adding item to 'sales' subcollection: " + itemName + ": " + e.getMessage());
+                                                                    });
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.w(TAG, "Error retrieving 'sales' subcollection for item: " + itemName + ": " + e.getMessage());
+                                                    });
+                                        }
+                                    }
                                 }
 
                                 firestore.collection("Users").document(userId).collection("cart")
@@ -279,7 +286,6 @@ public class MyCartFragment extends Fragment {
                     showMessage("Error retrieving adminCart documents: " + e.getMessage());
                 });
     }
-
 
 
     private void fetchCartItems() {

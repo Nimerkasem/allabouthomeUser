@@ -26,6 +26,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     private List<Item> itemList;
     private FirebaseAuth mAuth;
     private Context context;
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     public ItemAdapter(Context context, List<Item> itemList) {
         this.context = context;
@@ -66,7 +68,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return itemList.size();
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+        public static class ItemViewHolder extends RecyclerView.ViewHolder {
         ImageView itemImage;
         TextView itemName;
         TextView itemDescription;
@@ -85,7 +87,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         }
     }
 
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private void addToCart(String userId, Item product) {
         DocumentReference cartItemRef = db.collection("Users")

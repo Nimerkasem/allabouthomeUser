@@ -18,22 +18,14 @@ public class Users {
     }
 
     public static Users instance;
-
-    public Users(String username, String email, String phone, String birthday, String address, String password,String profilePicUrl) {
-        Address = address;
-        Birthday = birthday;
-        Email = email;
-        Password = password;
-        Phone = phone;
-        Username = username;
-        ProfilePicUrl= profilePicUrl;
-    }
     public static Users getInstance(){
         if(instance==null){
             instance=new Users();
         }
         return instance;
     }
+
+
     public String getAddress() {
         return Address;
     }

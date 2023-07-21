@@ -19,16 +19,6 @@ public class room {
         this.kind = kind;
     }
 
-    public room(double length, double width, double height) {
-        Length = length;
-        this.width = width;
-        this.height = height;
-    }
-    public room( String kind,double height) {
-        this.height = height;
-        this.kind = kind;
-    }
-
     public double getLength() {
         return Length;
     }
@@ -52,10 +42,7 @@ public class room {
     public double getHeight() {
         return height;
     }
-    public void setHeight(double height) {
-        this.height = height;
-    }
-    public static int getLux(room room) {
+        public static int getLux(room room) {
         int lux = 0;
         switch (room.getKind()) {
             case "living room Ambient":

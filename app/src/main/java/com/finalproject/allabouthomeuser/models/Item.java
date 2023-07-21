@@ -11,24 +11,13 @@ public class Item {
     private String image;
     private static String adminuid;
     private static ArrayList<String> categories;
+    public Item() {
+    }
 
     public Item(String name, ArrayList<String> categories){
         this.name = name;
         this.categories = categories;
     }
-
-    public Item(String uid, String adminuid, String name, String description, int price, String adminName, int quantity, String image) {
-        this.uid = uid;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.adminName = adminName;
-        this.quantity = quantity;
-        this.image = image;
-        this.adminuid = adminuid;
-    }
-
-
 
     public Item(ArrayList<String> categories, String uid, String adminuid, String name, String description, int price, String adminName, int quantity, String image) {
         this.categories = categories;
@@ -41,10 +30,6 @@ public class Item {
         this.image = image;
         this.adminuid = adminuid;
     }
-
-    public Item() {
-    }
-
 
 
     public static ArrayList<String> getCategories() {
@@ -67,11 +52,11 @@ public class Item {
         return description;
     }
 
-    public static int getPrice() {
+    public  int getPrice() {
         return price;
     }
 
-    public static String getAdminuid() {
+    public  String getAdminuid() {
         return adminuid;
     }
 
@@ -83,16 +68,14 @@ public class Item {
         return quantity;
     }
 
+    public void setQuantity(int newQuantity) {
+        this.quantity = newQuantity;
+    }
+
     public String getImage() {
         return image;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
 
-    public void setQuantity(int newQuantity) {
-        this.quantity = newQuantity;
-    }
 
 }
