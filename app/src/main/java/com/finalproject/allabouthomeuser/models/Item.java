@@ -5,12 +5,12 @@ public class Item {
     private String uid;
     private String name;
     private String description;
-    private static int price;
+    public int price;
     private String adminName;
     private int quantity;
     private String image;
-    private static String adminuid;
-    private static ArrayList<String> categories;
+    public String adminuid;
+    public ArrayList<String> categories;
     public Item() {
     }
 
@@ -32,13 +32,13 @@ public class Item {
     }
 
 
-    public static ArrayList<String> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(ArrayList<String> categories) {
-        this.categories = categories;
-    }
+//    public  ArrayList<String> getCategories() {
+//        return categories;
+//    }
+//
+//    public void setCategories(ArrayList<String> categories) {
+//        this.categories = categories;
+//    }
 
     public String getUid() {
         return uid;
@@ -52,13 +52,13 @@ public class Item {
         return description;
     }
 
-    public  int getPrice() {
-        return price;
-    }
-
-    public  String getAdminuid() {
-        return adminuid;
-    }
+//    public  int getPrice() {
+//        return price;
+//    }
+//
+//    public  String getAdminuid() {
+//        return adminuid;
+//    }
 
     public String getAdminName() {
         return adminName;

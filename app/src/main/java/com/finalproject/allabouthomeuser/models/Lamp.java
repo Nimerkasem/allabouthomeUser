@@ -25,8 +25,8 @@ public class Lamp extends Item {
     public int getShade() {
         return shade;
     }
-    public static boolean isRoomKindInCategoryList(String roomKind) {
-        ArrayList<String> categories = Lamp.getCategories();
+    public static boolean isRoomKindInCategoryList(String roomKind,Lamp lamp) {
+        ArrayList<String> categories = lamp.categories;
         for (String category : categories) {
             if( (category.toLowerCase().contains(roomKind.toLowerCase())) ||
                     roomKind.toLowerCase().contains(category.toLowerCase())) {

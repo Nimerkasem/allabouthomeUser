@@ -47,7 +47,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         myCart item = list.get(position);
         holder.name.setText(item.getName());
-        holder.price.setText((item.getPrice()) + "₪");
+        holder.price.setText((item.price) + "₪");
         holder.quantity.setText(String.valueOf(item.getQuantity()));
         mAuth = FirebaseAuth.getInstance();
         Glide.with(context).load(item.getImage()).into(holder.image);
@@ -224,14 +224,14 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                         if (cartItem != null) {
                             int originalQuantity = cartItem.getQuantity();
                             int newQuantity = item.getQuantity();
-                            int price = item.getPrice();
+                            int price = item.price;
                             int quantityDiff = newQuantity - originalQuantity;
                             int totalDiff = price * quantityDiff;
                             cartItemRef.update("quantity", item.getQuantity())
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d(TAG, "Cart item quantity successfully updated!");
 
-                                        updateAdminCart(userId, item.getAdminuid(), totalDiff);
+                                        updateAdminCart(userId, item.adminuid, totalDiff);
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.w(TAG, "Error updating cart item quantity", e);
@@ -256,9 +256,9 @@ public class MyCartAdapter extends RecyclerView.Adapter<MyCartAdapter.ViewHolder
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "Cart item successfully removed!");
                     int quantity = item.getQuantity();
-                    int price = item.getPrice();
+                    int price = item.price;
                     int total = quantity * price;
-                    updateAdminCart(userId, item.getAdminuid(), -total);
+                    updateAdminCart(userId, item.adminuid, -total);
 
                 })
                 .addOnFailureListener(e -> {

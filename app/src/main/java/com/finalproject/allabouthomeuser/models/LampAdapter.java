@@ -55,7 +55,7 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
         Lamp lamp = lampList.get(position);
         holder.txtName.setText(lamp.getName());
         holder.txtDescription.setText(lamp.getDescription());
-        holder.txtPrice.setText((lamp.getPrice())+"₪");
+        holder.txtPrice.setText((lamp.price)+"₪");
         holder.txtAdminName.setText(lamp.getAdminName());
         holder.txtWatt.setText((lamp.getWatt())+"Watt");
         holder.txtShade.setText((lamp.getShade())+"K");
@@ -117,7 +117,7 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                                     int newQuantity = quantity + 1;
                                     cartItemRef.update("quantity", newQuantity)
                                             .addOnSuccessListener(aVoid -> {
-                                                updateAdminCart(userId, lamp.getAdminuid(), lamp.getPrice());
+                                                updateAdminCart(userId, lamp.adminuid, lamp.price);
                                                 showToast("Lamp added to cart successfully");
                                             })
                                             .addOnFailureListener(e -> {
@@ -133,7 +133,7 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
                     lamp.setQuantity(1);
                     cartItemRef.set(lamp)
                             .addOnSuccessListener(aVoid -> {
-                                updateAdminCart(userId, lamp.getAdminuid(), lamp.getPrice());
+                                updateAdminCart(userId, lamp.adminuid, lamp.price);
                                 showToast("Lamp added to cart successfully");
                             })
                             .addOnFailureListener(e -> {

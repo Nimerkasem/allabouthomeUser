@@ -130,7 +130,7 @@ public class room {
             totalWattage += lamp.getWatt();
             if (getShade(room) != lamp.getShade())
                 return false;
-          if (!isRoomKindInCategoryList(room.getKind()))
+          if (!isRoomKindInCategoryList(room.getKind(),lamp))
                return false;
         }
         double roomWattNeeded = Ledwatt(room);

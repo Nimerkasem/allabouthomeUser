@@ -48,7 +48,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.itemImage);
         holder.itemName.setText(item.getName());
         holder.itemDescription.setText(item.getDescription());
-        holder.itemPrice.setText(String.valueOf(item.getPrice())+"₪");
+        holder.itemPrice.setText(String.valueOf(item.price)+"₪");
         holder.itemAdmin.setText(item.getAdminName());
         holder.addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +108,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                     cartItemRef.update("quantity", newQuantity)
                                             .addOnSuccessListener(aVoid -> {
                                                 Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                                updateAdminCart(userId, product.getAdminuid(), product.getPrice());
+                                                updateAdminCart(userId, product.adminuid, product.price);
                                                 showToast("Item added to cart successfully");
                                             })
                                             .addOnFailureListener(e -> {
@@ -125,7 +125,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     cartItemRef.set(product)
                             .addOnSuccessListener(aVoid -> {
                                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                                updateAdminCart(userId, product.getAdminuid(), product.getPrice());
+                                updateAdminCart(userId, product.adminuid, product.price);
                                 showToast("Item added to cart successfully");
                             })
                             .addOnFailureListener(e -> {

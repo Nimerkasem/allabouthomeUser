@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class MyCartFragment extends Fragment {
         recyclerView = view.findViewById(R.id.cart_items_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         cartList = new ArrayList<>();
-        cartAdapter = new MyCartAdapter(getContext(), cartList,this);
+        cartAdapter = new MyCartAdapter(getContext(), cartList, this);
         recyclerView.setAdapter(cartAdapter);
         buy = view.findViewById(R.id.buy_now);
         tvTotalPrice = view.findViewById(R.id.total_price_text_view);
@@ -69,8 +70,9 @@ public class MyCartFragment extends Fragment {
             Item item = cartList.get(i);
             String itemUid = item.getUid();
             int currentQuantity = item.getQuantity();
-            String adminUid = item.getAdminuid();
+            String adminUid = item.adminuid;
             String itemName = item.getName();
+            String adminName = item.getAdminName();
 
             firestore.collection("allproducts").document(itemUid)
                     .update("quantity", FieldValue.increment(-currentQuantity))
@@ -150,7 +152,6 @@ public class MyCartFragment extends Fragment {
             }
         }
 
-
         String userId = auth.getCurrentUser().getUid();
         firestore.collection("Users")
                 .document(userId)
@@ -177,8 +178,8 @@ public class MyCartFragment extends Fragment {
                                     Integer amountToSend = entry.getValue();
 
                                     double commissionAmount = amountToSend * 0.03;
+                                    String adminName = adminUid;
 
-                                    String adminName = "asfds"; // Replace this with the actual admin name
                                     Map<String, Object> commissionData = new HashMap<>();
                                     commissionData.put("adminName", adminName);
                                     commissionData.put("amount", commissionAmount);
@@ -186,16 +187,40 @@ public class MyCartFragment extends Fragment {
                                     firestore.collection("appadmin")
                                             .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
                                             .collection("commissions")
-                                            .document() // Use auto-generated document ID
-                                            .set(commissionData)
-                                            .addOnSuccessListener(commissionVoid -> {
-                                                Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminName);
+                                            .document(adminName) // Use admin's name as document ID
+                                            .get()
+                                            .addOnSuccessListener(documentSnapshot -> {
+                                                Double currentCommissionAmount = 0.0;
+
+                                                if (documentSnapshot.exists()) {
+                                                    currentCommissionAmount = documentSnapshot.getDouble("amount");
+                                                    if (currentCommissionAmount != null && currentCommissionAmount != 0.0) {
+                                                        currentCommissionAmount += commissionAmount;
+                                                    } else {
+                                                        currentCommissionAmount = commissionAmount;
+                                                    }
+                                                } else {
+                                                    currentCommissionAmount = commissionAmount;
+                                                }
+
+                                                commissionData.put("amount", currentCommissionAmount);
+
+                                                firestore.collection("appadmin")
+                                                        .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
+                                                        .collection("commissions")
+                                                        .document(adminName) // Use admin's name as document ID
+                                                        .set(commissionData)
+                                                        .addOnSuccessListener(commissionVoid -> {
+                                                            Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminName);
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            Log.w(TAG, "Error saving commission to appadmin for admin: " + adminName, e);
+                                                        });
                                             })
                                             .addOnFailureListener(e -> {
-                                                Log.w(TAG, "Error saving commission to appadmin for admin: " + adminName, e);
+                                                Log.e(TAG, "Error retrieving current commission for admin: " + adminName + ": " + e.getMessage());
                                             });
 
-                                    // Save the commission to the respective admin's bag collection
                                     Map<String, Object> bagData = new HashMap<>();
                                     bagData.put("adminUid", adminUid);
                                     bagData.put("amountToSend", amountToSend);
@@ -214,7 +239,7 @@ public class MyCartFragment extends Fragment {
                                     for (Item item : cartList) {
                                         String itemName = item.getName();
                                         int amountBought = item.getQuantity();
-                                        String itemAdminUid = item.getAdminuid();
+                                        String itemAdminUid = item.adminuid;
 
                                         if (adminUid.equals(itemAdminUid)) {
                                             firestore.collection("Admins").document(adminUid)
@@ -288,6 +313,8 @@ public class MyCartFragment extends Fragment {
     }
 
 
+
+
     private void fetchCartItems() {
         String userId = auth.getCurrentUser().getUid();
 
@@ -312,7 +339,7 @@ public class MyCartFragment extends Fragment {
     private double calculateTotalPrice(List<myCart> cartItems) {
         double totalPrice = 0;
         for (myCart item : cartItems) {
-            double itemPrice = item.getPrice();
+            double itemPrice = item.price;
             double itemQuantity = item.getQuantity();
             totalPrice += (itemPrice * itemQuantity);
         }

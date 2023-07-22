@@ -72,7 +72,7 @@ public class all extends Fragment {
     private void filterItemsByCategory(String selectedCategory) {
         List<Item> filteredItems = new ArrayList<>();
         for (Item item : itemList) {
-            ArrayList<String> categories = item.getCategories();
+            ArrayList<String> categories = item.categories;
             if (categories.contains(selectedCategory)) {
                 filteredItems.add(item);
             }
