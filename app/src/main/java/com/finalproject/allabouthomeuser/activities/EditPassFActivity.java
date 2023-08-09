@@ -43,7 +43,7 @@ public class EditPassFActivity extends AppCompatActivity {
         String confirmPass = confp.getText().toString();
 
         if (originalPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
-            Toast.makeText(EditPassFActivity.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditPassFActivity.this, "Please fill in categories the fields", Toast.LENGTH_SHORT).show();
             return;
         }
 

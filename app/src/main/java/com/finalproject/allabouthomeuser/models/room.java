@@ -1,8 +1,6 @@
 package com.finalproject.allabouthomeuser.models;
 
 import static com.finalproject.allabouthomeuser.models.Lamp.isRoomKindInCategoryList;
-import static com.finalproject.allabouthomeuser.models.room.getShade;
-
 import java.util.List;
 
 public class room {
@@ -22,9 +20,6 @@ public class room {
     public double getLength() {
         return Length;
     }
-    public void setLength(double length) {
-        Length = length;
-    }
     public double getWidth() {
         return width;
     }
@@ -34,10 +29,6 @@ public class room {
     public String getKind() {
         return kind;
     }
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
-
 
     public double getHeight() {
         return height;
@@ -117,10 +108,7 @@ public class room {
         double roomlux= area * lux;
         return  roomlux / 90;//90הוא ייחס וואט ללומן בנורת לד אחת
     }
-        public static int numberoflamps(room room ,Lamp lamp) {
 
-        return  (int) (Ledwatt(room)/lamp.getWatt()+1);
-    }
     public static boolean Suitablelamps(room room, List<Lamp> lamps) {
         if (lamps.isEmpty())
             System.out.println("EROOOOOOOOR" );
@@ -142,6 +130,7 @@ public class room {
             return false;
         return true;
     }
+
 
 
 

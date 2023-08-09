@@ -1,7 +1,6 @@
 package com.finalproject.allabouthomeuser.fragments;
 
 import static com.finalproject.allabouthomeuser.models.room.Suitablelamps;
-import static com.finalproject.allabouthomeuser.models.room.getShade;
 import static com.finalproject.allabouthomeuser.models.room.lamphanging;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,13 +18,10 @@ import androidx.fragment.app.Fragment;
 import com.finalproject.allabouthomeuser.models.Lamp;
 import com.finalproject.allabouthomeuser.models.room;
 import com.finalproject.allabouthomeuser.R;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +34,10 @@ public class LightCalcFragment extends Fragment {
     private TextView tvLedWatt;
     private TextView tvShade;
     private EditText getheight;
-
     private TextView tvAngle;
     private  TextView setheight;
     FirebaseAuth mAuth;
+
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Nullable
@@ -85,7 +81,7 @@ public class LightCalcFragment extends Fragment {
 
     private void calculateLedWatt() {
         if (etLength.getText().toString().isEmpty() || etWidth.getText().toString().isEmpty() || getheight.getText().toString().isEmpty()) {
-            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please fill in categories fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -93,7 +89,9 @@ public class LightCalcFragment extends Fragment {
         double width = Double.parseDouble(etWidth.getText().toString());
         double Height =Double.parseDouble(getheight.getText().toString());
         String kind = spRoomKind.getSelectedItem().toString();
+        String userId = mAuth.getCurrentUser().getUid();
         room a = new room(length, width, Height,kind);
+        db.collection("Users").document(userId).collection("userroom").add(a);
         double ledWatt = room.Ledwatt(a);
         int shade = room.getShade(a);
         int Angle =room.getAngle(a);
@@ -104,7 +102,7 @@ public class LightCalcFragment extends Fragment {
 
     private void matching() {
         if (etLength.getText().toString().isEmpty() || etWidth.getText().toString().isEmpty() || getheight.getText().toString().isEmpty()) {
-            Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please fill in categories fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -152,9 +150,8 @@ public class LightCalcFragment extends Fragment {
     
 
 
-
-
     private void displayCalculationResult(double ledWatt, int shade,int Angle,String massege) {
+
 
         String shadeMessage = "Shade: " + shade+"k";
         String AngleMassage ="Angle: " + Angle+"°";

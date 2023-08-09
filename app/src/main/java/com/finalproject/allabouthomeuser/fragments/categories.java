@@ -23,7 +23,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-public class all extends Fragment {
+public class categories extends Fragment {
     private List<Item> itemList;
     private RecyclerView itemRecyclerView;
     private FirebaseAuth auth = FirebaseAuth.getInstance();

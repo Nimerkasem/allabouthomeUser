@@ -1,21 +1,16 @@
 package com.finalproject.allabouthomeuser.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
-
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.ItemAdapter;
@@ -27,7 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class homeFragment extends Fragment implements View.OnClickListener {
+public class furniture extends Fragment implements View.OnClickListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private CollectionReference allProductsRef = db.collection("allproducts");
@@ -82,7 +77,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     }
     private void opencatigotiesfragment() {
         hideProductViews();
-        Fragment all = new all();
+        Fragment all = new categories();
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragmentContainer, all);
@@ -139,7 +134,7 @@ public class homeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getAllProducts() {
-        Log.d("homeFragment", "getAllProducts() called.");
+        Log.d("furniture", "getAllProducts() called.");
         allProductsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {

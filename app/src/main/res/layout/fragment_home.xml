@@ -3,7 +3,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/purpleback"
-        tools:context=".fragments.homeFragment">
+        tools:context=".fragments.furniture">
 
 
         <androidx.recyclerview.widget.RecyclerView

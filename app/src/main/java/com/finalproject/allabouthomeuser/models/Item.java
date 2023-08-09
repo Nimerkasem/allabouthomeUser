@@ -32,13 +32,7 @@ public class Item {
     }
 
 
-//    public  ArrayList<String> getCategories() {
-//        return categories;
-//    }
-//
-//    public void setCategories(ArrayList<String> categories) {
-//        this.categories = categories;
-//    }
+
 
     public String getUid() {
         return uid;
@@ -52,13 +46,7 @@ public class Item {
         return description;
     }
 
-//    public  int getPrice() {
-//        return price;
-//    }
-//
-//    public  String getAdminuid() {
-//        return adminuid;
-//    }
+
 
     public String getAdminName() {
         return adminName;

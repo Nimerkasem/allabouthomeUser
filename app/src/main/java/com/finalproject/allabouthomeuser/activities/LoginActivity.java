@@ -24,7 +24,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText login_email, login_pass;
     private Button loginBtn, join;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +34,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         join = (Button) findViewById(R.id.join);
         join.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
-
 
     }
 
@@ -61,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             loginAccountInFirebase(email, pass);
         }
     }
-
     private void loginAccountInFirebase(String email, String pass) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

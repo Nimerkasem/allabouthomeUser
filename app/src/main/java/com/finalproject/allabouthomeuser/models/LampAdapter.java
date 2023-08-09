@@ -1,7 +1,6 @@
 package com.finalproject.allabouthomeuser.models;
 import static android.content.ContentValues.TAG;
 import static com.finalproject.allabouthomeuser.models.ItemAdapter.updateAdminCart;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +34,11 @@ public class LampAdapter extends RecyclerView.Adapter<LampAdapter.LampViewHolder
         db = FirebaseFirestore.getInstance();
     }
 
+    public void setData(List<Lamp> newLampList) {
+        lampList.clear();
+        lampList.addAll(newLampList);
+        notifyDataSetChanged();
+    }
     public interface OnAddToCartClickListener {
         void onAddToCartClick(Lamp lamp);
     }

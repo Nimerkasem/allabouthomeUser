@@ -1,7 +1,6 @@
 package com.finalproject.allabouthomeuser.fragments;
 
 import static android.content.ContentValues.TAG;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,12 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.Lamp;
@@ -23,13 +19,12 @@ import com.finalproject.allabouthomeuser.models.MyCartAdapter;
 import com.finalproject.allabouthomeuser.models.myCart;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +67,6 @@ public class MyCartFragment extends Fragment {
             int currentQuantity = item.getQuantity();
             String adminUid = item.adminuid;
             String itemName = item.getName();
-            String adminName = item.getAdminName();
 
             firestore.collection("allproducts").document(itemUid)
                     .update("quantity", FieldValue.increment(-currentQuantity))
@@ -165,77 +159,80 @@ public class MyCartFragment extends Fragment {
                         int totalPrice = (totalPriceLong != null) ? totalPriceLong.intValue() : 0;
                         adminCart.put(adminId, totalPrice);
                     }
-
                     List<Task<Void>> deleteTasks = new ArrayList<>();
                     for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                         deleteTasks.add(document.getReference().delete());
                     }
-
                     Tasks.whenAll(deleteTasks)
                             .addOnSuccessListener(deleteVoid -> {
                                 for (Map.Entry<String, Integer> entry : adminCart.entrySet()) {
                                     String adminUid = entry.getKey();
                                     Integer amountToSend = entry.getValue();
-
                                     double commissionAmount = amountToSend * 0.03;
-                                    String adminName = adminUid;
+                                    firestore.collection("Admins").get().addOnCompleteListener(task -> {
+                                        if (task.isSuccessful()) {
+                                            for (DocumentSnapshot document : task.getResult()) {
+                                                if (document.getId().equals(adminUid)){
+                                                        String adminName = document.getString("name");
+                                                        Map<String, Object> commissionData = new HashMap<>();
+                                                        commissionData.put("adminName", adminName);
+                                                        commissionData.put("amount", commissionAmount);
 
-                                    Map<String, Object> commissionData = new HashMap<>();
-                                    commissionData.put("adminName", adminName);
-                                    commissionData.put("amount", commissionAmount);
+                                                        firestore.collection("appadmin")
+                                                                .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
+                                                                .collection("commissions")
+                                                                .document(adminName)
+                                                                .get()
+                                                                .addOnSuccessListener(documentSnapshot -> {
+                                                                    Double currentCommissionAmount = 0.0;
 
-                                    firestore.collection("appadmin")
-                                            .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
-                                            .collection("commissions")
-                                            .document(adminName) // Use admin's name as document ID
-                                            .get()
-                                            .addOnSuccessListener(documentSnapshot -> {
-                                                Double currentCommissionAmount = 0.0;
+                                                                    if (documentSnapshot.exists()) {
+                                                                        currentCommissionAmount = documentSnapshot.getDouble("amount");
+                                                                        if (currentCommissionAmount != null && currentCommissionAmount != 0.0) {
+                                                                            currentCommissionAmount += commissionAmount;
+                                                                        } else {
+                                                                            currentCommissionAmount = commissionAmount;
+                                                                        }
+                                                                    } else {
+                                                                        currentCommissionAmount = commissionAmount;
+                                                                    }
 
-                                                if (documentSnapshot.exists()) {
-                                                    currentCommissionAmount = documentSnapshot.getDouble("amount");
-                                                    if (currentCommissionAmount != null && currentCommissionAmount != 0.0) {
-                                                        currentCommissionAmount += commissionAmount;
-                                                    } else {
-                                                        currentCommissionAmount = commissionAmount;
+                                                                    commissionData.put("amount", currentCommissionAmount);
+
+                                                                    firestore.collection("appadmin")
+                                                                            .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
+                                                                            .collection("commissions")
+                                                                            .document(adminName)
+                                                                            .set(commissionData)
+                                                                            .addOnSuccessListener(commissionVoid -> {
+                                                                                Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminName);
+                                                                            })
+                                                                            .addOnFailureListener(e -> {
+                                                                                Log.w(TAG, "Error saving commission to appadmin for admin: " + adminName, e);
+                                                                            });
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                    Log.e(TAG, "Error retrieving current commission for admin: " + adminName + ": " + e.getMessage());
+                                                                });
+
+                                                        Map<String, Object> bagData = new HashMap<>();
+                                                        bagData.put("adminUid", adminName);
+                                                        bagData.put("amountToSend", amountToSend);
+
+                                                        firestore.collection("Admins")
+                                                                .document(adminUid)
+                                                                .collection("bag")
+                                                                .add(bagData)
+                                                                .addOnSuccessListener(bagVoid -> {
+                                                                    Log.d(TAG, "Bag data successfully saved for admin: " + adminUid);
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                    Log.w(TAG, "Error saving bag data for admin: " + adminUid, e);
+                                                                });
                                                     }
-                                                } else {
-                                                    currentCommissionAmount = commissionAmount;
-                                                }
-
-                                                commissionData.put("amount", currentCommissionAmount);
-
-                                                firestore.collection("appadmin")
-                                                        .document("T7MSJ35OhPfEtAPgyoWiRVgec7C2")
-                                                        .collection("commissions")
-                                                        .document(adminName) // Use admin's name as document ID
-                                                        .set(commissionData)
-                                                        .addOnSuccessListener(commissionVoid -> {
-                                                            Log.d(TAG, "Commission successfully saved to appadmin for admin: " + adminName);
-                                                        })
-                                                        .addOnFailureListener(e -> {
-                                                            Log.w(TAG, "Error saving commission to appadmin for admin: " + adminName, e);
-                                                        });
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Log.e(TAG, "Error retrieving current commission for admin: " + adminName + ": " + e.getMessage());
-                                            });
-
-                                    Map<String, Object> bagData = new HashMap<>();
-                                    bagData.put("adminUid", adminUid);
-                                    bagData.put("amountToSend", amountToSend);
-
-                                    firestore.collection("Admins")
-                                            .document(adminUid)
-                                            .collection("bag")
-                                            .add(bagData)
-                                            .addOnSuccessListener(bagVoid -> {
-                                                Log.d(TAG, "Bag data successfully saved for admin: " + adminUid);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Log.w(TAG, "Error saving bag data for admin: " + adminUid, e);
-                                            });
-
+                                            }
+                                        }
+                                    });
                                     for (Item item : cartList) {
                                         String itemName = item.getName();
                                         int amountBought = item.getQuantity();
@@ -310,6 +307,7 @@ public class MyCartFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     showMessage("Error retrieving adminCart documents: " + e.getMessage());
                 });
+
     }
 
 
