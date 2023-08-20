@@ -46,7 +46,37 @@ public class Item {
         return description;
     }
 
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setAdminuid(String adminuid) {
+        this.adminuid = adminuid;
+    }
+
+    public void setCategories(ArrayList<String> categories) {
+        this.categories = categories;
+    }
 
     public String getAdminName() {
         return adminName;

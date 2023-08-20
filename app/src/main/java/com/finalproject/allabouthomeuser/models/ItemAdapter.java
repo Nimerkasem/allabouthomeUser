@@ -22,18 +22,38 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
     private List<Item> itemList;
     private FirebaseAuth mAuth;
     private Context context;
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private boolean showAddToCartButton;
+    private boolean showItemImage;
+    private boolean showItemQuantity;
 
-
-    public ItemAdapter(Context context, List<Item> itemList) {
+    public ItemAdapter(List<Item> itemList) {
         this.context = context;
         this.itemList = itemList;
         mAuth = FirebaseAuth.getInstance();
     }
+
+    public ItemAdapter(List<Item> itemList, boolean showAddToCartButton, boolean showItemImage, boolean showItemQuantity) {
+        this.itemList = itemList;
+        this.showAddToCartButton = showAddToCartButton;
+        this.showItemImage = showItemImage;
+        this.showItemQuantity = showItemQuantity;
+        mAuth = FirebaseAuth.getInstance();
+    }
+    public ItemAdapter(List<Item> itemList, Context context, boolean showAddToCartButton, boolean showItemImage, boolean showItemQuantity) {
+        this.context = context;
+        this.itemList = itemList;
+        this.showAddToCartButton = showAddToCartButton;
+        this.showItemImage = showItemImage;
+        this.showItemQuantity = showItemQuantity;
+        mAuth = FirebaseAuth.getInstance();
+    }
+
 
     @NonNull
     @Override
@@ -48,15 +68,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.itemImage);
         holder.itemName.setText(item.getName());
         holder.itemDescription.setText(item.getDescription());
-        holder.itemPrice.setText(String.valueOf(item.price)+"₪");
+        holder.itemPrice.setText(String.valueOf(item.price) + "₪");
         holder.itemAdmin.setText(item.getAdminName());
-        holder.addToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userId = mAuth.getCurrentUser().getUid();
-                addToCart(userId, item);
-            }
-        });
+
+        if (showAddToCartButton) {
+            holder.addToCart.setVisibility(View.VISIBLE);
+            holder.addToCart.setOnClickListener(v -> addToCart(item));
+        } else {
+            holder.addToCart.setVisibility(View.GONE);
+        }
     }
 
     public void setItems(List<Item> items) {
@@ -68,7 +88,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return itemList.size();
     }
 
-        public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
         ImageView itemImage;
         TextView itemName;
         TextView itemDescription;
@@ -87,12 +107,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         }
     }
 
-
-    private void addToCart(String userId, Item product) {
+    private void addToCart(Item product) {
+        String userId = mAuth.getCurrentUser().getUid();
         DocumentReference cartItemRef = db.collection("Users")
                 .document(userId)
                 .collection("cart")
                 .document(product.getUid());
+
         cartItemRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
@@ -115,7 +136,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                                                 Log.w(TAG, "Error updating document", e);
                                             });
                                 } else {
-                                    showToast("cant afford this quantity");
+                                    showToast("Cannot add more of this item");
                                 }
                             }
                         }
@@ -204,7 +225,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
                     }
                 });
     }
-
 
     private void showToast(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();

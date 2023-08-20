@@ -7,15 +7,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.finalproject.allabouthomeuser.R;
 import com.finalproject.allabouthomeuser.activities.EditPassFActivity;
+import com.finalproject.allabouthomeuser.activities.orders;
 import com.finalproject.allabouthomeuser.models.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -42,6 +47,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private TextView email, birthday;
     private EditText username,  phone;
     private Uri imageUri;
+    private FrameLayout fragmentContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +55,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             userId = firebaseUser.getUid();
-
+            fragmentContainer=view.findViewById(R.id.fragmentContainer);
             username = view.findViewById(R.id.username);
             email = view.findViewById(R.id.email);
             phone = view.findViewById(R.id.phone);
@@ -60,9 +66,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             view.findViewById(R.id.save).setOnClickListener(this);
             view.findViewById(R.id.editPass).setOnClickListener(this);
-
-
-
+            view.findViewById(R.id.orders).setOnClickListener(this);
 
             DocumentReference userRef = db.collection("Users").document(userId);
             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -92,17 +96,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    @Override
+
     public void onClick(View v) {
         if (v.getId() == R.id.save) {
             updateProfile();
         } else if (v.getId() == R.id.editPass) {
             startActivity(new Intent(getActivity(), EditPassFActivity.class));
-
-
         } else if (v.getId() == R.id.profileImg) {
             openImageChooser();
+        } else if (v.getId() == R.id.orders) {
+            startActivity(new Intent(getActivity(), orders.class));
         }
+
     }
 
     private void updateProfile() {

@@ -1,17 +1,20 @@
 package com.finalproject.allabouthomeuser.fragments;
 
+
+import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.finalproject.allabouthomeuser.R;
+import com.finalproject.allabouthomeuser.activities.firebase;
 import com.finalproject.allabouthomeuser.models.Item;
 import com.finalproject.allabouthomeuser.models.ItemAdapter;
 import com.google.firebase.firestore.CollectionReference;
@@ -21,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class furniture extends Fragment implements View.OnClickListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -39,7 +43,7 @@ public class furniture extends Fragment implements View.OnClickListener {
         itemList = new ArrayList<>();
         itemRecyclerView = view.findViewById(R.id.itemRecyclerView);
         itemRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        itemAdapter = new ItemAdapter(getActivity(), itemList);
+        itemAdapter = new ItemAdapter(itemList, requireContext(), true, true, true);
         itemRecyclerView.setAdapter(itemAdapter);
         allproduct=view.findViewById(R.id.allproduct);
         allproduct = view.findViewById(R.id.allproduct);
@@ -134,36 +138,53 @@ public class furniture extends Fragment implements View.OnClickListener {
     }
 
     private void getAllProducts() {
-        Log.d("furniture", "getAllProducts() called.");
         allProductsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (DocumentSnapshot document : task.getResult()) {
-                    String itemUid = document.getId();
-                    int quantity = document.getLong("quantity").intValue();
-                    if (quantity > 0) {
-                        String name = document.getString("name");
-                        String description = document.getString("description");
-                        int price = document.getLong("price").intValue();
-                        String adminName = document.getString("adminName");
-                        String adminuid = document.getString("adminUID");
-                        String imageURL = document.getString("imageURL");
-                        if (imageURL != null && !imageURL.isEmpty()) {
-                            StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
-                            imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
-                                ArrayList<String> categories = (ArrayList<String>) document.get("categories");
-                                Item item = new Item(categories,itemUid, adminuid, name, description, price, adminName, quantity, imageURL);
-                                 itemList.add(item);
-                                itemAdapter.notifyDataSetChanged();
-                            }).addOnFailureListener(exception -> {
+                    try {
+                        String itemUid = document.getId();
+                        int quantity = document.getLong("quantity").intValue();
+                        if (quantity > 0) {
+                            String name = document.getString("name");
+                            String description = document.getString("description");
+                            int price = document.getLong("price").intValue();
+                            String adminName = document.getString("adminName");
+                            String adminuid = document.getString("adminUID");
+                            String imageURL = document.getString("imageURL");
 
-                            });
-                        } else {
+                            if (imageURL != null && !imageURL.isEmpty()) {
+                                StorageReference imageRef = storage.getReferenceFromUrl(imageURL);
+                                imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+                                    ArrayList<String> categories = (ArrayList<String>) document.get("categories");
+                                    Item item = new Item(categories, itemUid, adminuid, name, description, price, adminName, quantity, imageURL);
+                                    firebase firebaseInstance = new firebase();
 
+                                    CompletableFuture<Boolean> adminActiveFuture = firebaseInstance.adminactive(item.adminuid);
+
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        adminActiveFuture.thenAccept(isActive -> {
+                                            if (isActive) {
+                                                itemList.add(item);
+                                                itemAdapter.notifyDataSetChanged();
+                                            }
+                                        }).exceptionally(ex -> {
+                                            // Handle exception if fetching admin status fails
+                                            return null;
+                                        });
+                                    }
+
+                                }).addOnFailureListener(exception -> {
+                                    // Handle failure of getting image bytes
+                                });
+                            }
                         }
+                    } catch (Exception e) {
+                        // Handle any exception that occurs during item processing
+                        e.printStackTrace();
                     }
                 }
             } else {
-
+                // Handle task failure
             }
         });
     }

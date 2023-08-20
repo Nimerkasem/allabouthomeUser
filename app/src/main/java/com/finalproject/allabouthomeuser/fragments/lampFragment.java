@@ -4,6 +4,7 @@ import static com.finalproject.allabouthomeuser.models.Lamp.isRoomKindInCategory
 import static com.finalproject.allabouthomeuser.models.room.Ledwatt;
 import static com.finalproject.allabouthomeuser.models.room.getShade;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.finalproject.allabouthomeuser.R;
+import com.finalproject.allabouthomeuser.activities.firebase;
 import com.finalproject.allabouthomeuser.models.Lamp;
 import com.finalproject.allabouthomeuser.models.LampAdapter;
 import com.finalproject.allabouthomeuser.models.room;
@@ -23,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class lampFragment extends Fragment {
     private RecyclerView lampRecyclerView;
@@ -110,26 +113,44 @@ public class lampFragment extends Fragment {
             if (task.isSuccessful()) {
                 lampList.clear();
                 for (DocumentSnapshot document : task.getResult()) {
-                    String itemUid = document.getId();
-                    int quantity = document.getLong("quantity").intValue();
-                    String name = document.getString("name");
-                    String description = document.getString("description");
-                    int price = document.getLong("price").intValue();
-                    String adminName = document.getString("adminName");
-                    String adminuid = document.getString("adminUID");
-                    int shade = Math.toIntExact(document.getLong("shade"));
-                    double watt = document.getLong("wattage").intValue();
-                    String imageURL = document.getString("imageURL");
-                    ArrayList<String> categories = (ArrayList<String>) document.get("categories");
-                    Lamp lamp = new Lamp(categories,itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
-                     lampList.add(lamp);
+                    try {
+                        String itemUid = document.getId();
+                        int quantity = document.getLong("quantity").intValue();
+                        String name = document.getString("name");
+                        String description = document.getString("description");
+                        int price = document.getLong("price").intValue();
+                        String adminName = document.getString("adminName");
+                        String adminuid = document.getString("adminUID");
+                        int shade = Math.toIntExact(document.getLong("shade"));
+                        double watt = document.getLong("wattage").intValue();
+                        String imageURL = document.getString("imageURL");
+                        ArrayList<String> categories = (ArrayList<String>) document.get("categories");
+                        Lamp lamp = new Lamp(categories, itemUid, adminuid, name, description, price, adminName, quantity, imageURL, watt, shade);
+                        firebase firebaseInstance = new firebase();
+
+                        CompletableFuture<Boolean> adminActiveFuture = firebaseInstance.adminactive(lamp.adminuid);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            adminActiveFuture.thenAccept(isActive -> {
+                                if (isActive) {
+                                    lampList.add(lamp);
+                                    lampAdapter.notifyDataSetChanged();
+                                }
+                            }).exceptionally(ex -> {
+                                // Handle exception if fetching admin status fails
+                                return null;
+                            });
+                        }
+
+                    } catch (Exception e) {
+                        // Handle any exception that occurs during item processing
+                        e.printStackTrace();
+                    }
                 }
-                lampAdapter.notifyDataSetChanged();
-            } else {
-                // Handle the error
             }
-        });
-    }
+
+    });
+}
 
 
 }

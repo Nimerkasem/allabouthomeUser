@@ -1,5 +1,7 @@
 package com.finalproject.allabouthomeuser.activities;
 
+import android.os.Build;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class firebase {
     public static void clearRoomLampsCollection() {
@@ -35,5 +38,39 @@ public class firebase {
             }
         });
     }
+
+    public  CompletableFuture<Boolean> adminactive(String adminuid) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference currentadminRef = firestore.collection("Admins").document(adminuid);
+
+        CompletableFuture<Boolean> future = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            future = new CompletableFuture<>();
+        }
+
+        CompletableFuture<Boolean> finalFuture = future;
+        currentadminRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document != null && document.exists()) {
+                    boolean isActive = document.getBoolean("isActive");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        finalFuture.complete(isActive);
+                    }
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        finalFuture.complete(false);
+                    }
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    finalFuture.complete(false);
+                }
+            }
+        });
+
+        return future;
+    }
 }
+
 

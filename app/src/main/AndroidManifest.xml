@@ -24,6 +24,10 @@
             android:name=".activities.LoginActivity"
             android:exported="false" />
         <activity
+
+            android:name=".activities.orders"
+            android:exported="false" />
+        <activity
             android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
